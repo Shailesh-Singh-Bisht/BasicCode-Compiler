@@ -132,9 +132,3 @@ Want to improve the compiler? Follow these steps:
 ## **📜 License**
 This project is **open-source** under the **MIT License**.  
 
----
-
-# **🎯 Now Your Compiler is Ready for Users! 🚀**
-This README is **simple, structured, and easy to follow** for users who want to **compile and run BasicCode programs**.  
-
-Next, do you need a **README for developers contributing to the project?** 😊
