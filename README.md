@@ -5,36 +5,36 @@ Here's your cleaned-up **`README.md`** with typos fixed and formatting improved:
 ### **📜 `README.md` for BasicCode Compiler**  
 
 ```md
-# BasicCode Compiler  
-A simple compiler for the **BasicCode (`.bac`)** programming language, built using **Flex, Bison, GCC, and CMake**. This project compiles `.bac` source files into executable machine code.  
+ BasicCode Compiler  
+A simple compiler for the BasicCode (`.bac`) programming language, built using Flex, Bison, GCC, and CMake. This project compiles `.bac` source files into executable machine code.  
 
-## 🚀 Features  
-✅ **Lexical Analysis** (Tokenization using Flex)  
-✅ **Parsing & AST Generation** (Using Bison)  
-✅ **Code Generation** (Using GCC backend)  
-✅ **Support for Expressions, Variables, and Functions**  
-✅ **Custom Intermediate Representation (IR) instead of LLVM**  
+ 🚀 Features  
+✅ Lexical Analysis (Tokenization using Flex)  
+✅ Parsing & AST Generation (Using Bison)  
+✅ Code Generation (Using GCC backend)  
+✅ Support for Expressions, Variables, and Functions  
+✅ Custom Intermediate Representation (IR) instead of LLVM
 
 ---
 
-## 🛠️ Setting Up the Project  
+🛠️ Setting Up the Project  
 
-### 1️⃣ Install Dependencies  
+1️⃣ Install Dependencies  
 Make sure you have the following installed:  
 
-- **CMake** → [Download](https://cmake.org/download/)  
-- **MSYS2 (for MinGW GCC)** → [Download](https://www.msys2.org/)  
-- **Flex & Bison** → Install `WinFlexBison` from [here](https://sourceforge.net/projects/winflexbison/)  
+- CMake → [Download](https://cmake.org/download/)  
+- MSYS2 (for MinGW GCC) → [Download](https://www.msys2.org/)  
+- Flex & Bison → Install `WinFlexBison` from [here](https://sourceforge.net/projects/winflexbison/)  
 
-### 2️⃣ Install MinGW GCC on MSYS2  
-After installing MSYS2, open the **MSYS2 MinGW64 terminal** and run:  
+2️⃣ Install MinGW GCC on MSYS2  
+After installing MSYS2, open the MSYS2 MinGW64 terminal and run:  
 ```sh
 pacman -S mingw-w64-x86_64-gcc mingw-w64-x86_64-make
 ```
 
-### 3️⃣ Install Flex & Bison (WinFlexBison)  
+3️⃣ Install Flex & Bison (WinFlexBison)  
 - Download `WinFlexBison` from [SourceForge](https://sourceforge.net/projects/winflexbison/)  
-- Extract it, and add the `bin/` directory to your **System PATH**.  
+- Extract it, and add the `bin/` directory to your System PATH.  
 
 Check installation with:  
 ```sh
