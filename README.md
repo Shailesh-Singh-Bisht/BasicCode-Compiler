@@ -1,134 +1,155 @@
-Here’s a **user-friendly README** for people who want to use your **BasicCode Compiler**.  
+Here’s a **developer-friendly `README.md`** for your **BasicCode** compiler project. It includes setup instructions, project structure, and usage details. 🚀  
 
 ---
 
-# **🚀 BasicCode Compiler**  
-A simple compiler for the **BasicCode** programming language, built using **C++ and MinGW-w64**.  
+### **📜 `README.md` for BasicCode Compiler**  
 
-## **📌 Features**
-✅ Supports **variable declarations, loops, and functions**  
-✅ Converts **BasicCode** into C code or Assembly  
-✅ Works on **Windows (MSYS2 MinGW)**  
-✅ Open-source and easy to use  
+```md
+# BasicCode Compiler  
+A simple compiler for the **BasicCode (`.bac`)** programming language, built using **Flex, Bison, GCC, and CMake**. This project compiles `.bac` source files into executable machine code.  
+
+## 🚀 Features  
+✅ **Lexical Analysis** (Tokenization using Flex)  
+✅ **Parsing & AST Generation** (Using Bison)  
+✅ **Code Generation** (Using GCC backend)  
+✅ **Support for Expressions, Variables, and Functions**  
+✅ **Custom Intermediate Representation (IR) instead of LLVM**  
 
 ---
 
-## **📥 Installation**
-### **🔹 Prerequisites**
-Before using the compiler, install:  
-- ✅ **MSYS2 with MinGW-w64** (Download: [https://www.msys2.org/](https://www.msys2.org/))  
-- ✅ **CMake** (Download: [https://cmake.org/download/](https://cmake.org/download/))  
-- ✅ **GCC/G++** (Installed via MSYS2)  
+## 🛠️ Setting Up the Project  
 
-### **🔹 Cloning the Repository**
-```bash
-git clone https://github.com/yourusername/BasicCodeCompiler.git
-cd BasicCodeCompiler
+### **1️⃣ Install Dependencies**  
+Make sure you have the following installed:  
+
+🔹 **CMake** → [Download](https://cmake.org/download/)  
+🔹 **MSYS2 (for MinGW GCC)** → [Download](https://www.msys2.org/)  
+🔹 **Flex & Bison** → Install `WinFlexBison` from [here](https://sourceforge.net/projects/winflexbison/)  
+
+### **2️⃣ Install MinGW GCC on MSYS2**  
+After installing MSYS2, open the **MSYS2 MinGW64 terminal** and run:  
+```sh
+pacman -S mingw-w64-x86_64-gcc mingw-w64-x86_64-make
+```
+
+### **3️⃣ Install Flex & Bison (WinFlexBison)**  
+- Download `WinFlexBison` from [SourceForge](https://sourceforge.net/projects/winflexbison/)  
+- Extract it, and add the `bin/` directory to your **System PATH**.  
+
+Check installation with:  
+```sh
+win_flex --version
+win_bison --version
 ```
 
 ---
 
-## **🛠️ How to Build the Compiler**
-### **🔹 Step 1: Configure the Build**
-```bash
-mkdir build && cd build
+## 🏗️ Building the Compiler  
+
+### **1️⃣ Clone the Repository**  
+```sh
+git clone https://github.com/yourusername/BasicCode-Compiler.git
+cd BasicCode-Compiler
+```
+
+### **2️⃣ Configure & Build with CMake**  
+```sh
+mkdir build
+cd build
 cmake .. -G "MinGW Makefiles"
+cmake --build .
 ```
 
-### **🔹 Step 2: Compile the Compiler**
-```bash
-mingw32-make
-```
-
-### **🔹 Step 3: Verify the Compiler**
-Run:
-```bash
-./compiler --help
-```
-If it prints usage instructions, your compiler is ready! ✅  
-
----
-
-## **🚀 Running BasicCode Programs**
-### **🔹 Compiling a BasicCode File**
-To compile a `.bac` file, run:
-```bash
-./compiler ../examples/hello.bac -o output.c
-```
-This generates `output.c`, which you can compile using **GCC**:
-```bash
-gcc output.c -o program.exe
-```
-Run the program:
-```bash
-./program.exe
+### **3️⃣ Run the Compiler**  
+```sh
+./mycompiler ../examples/test.bac
 ```
 
 ---
 
-## **📜 Example: BasicCode Program (`hello.bac`)**
-```basiccode
-print("Hello, World!");
+## 📂 Project Structure  
+
 ```
-### **✅ Compiling & Running**
-```bash
-./compiler hello.bac -o hello.c
-gcc hello.c -o hello.exe
-./hello.exe
+BasicCode-Compiler/
+│── include/               # Header files (.h)
+│   ├── lexer.h            # Lexer definitions
+│   ├── parser.h           # Parser & AST structure
+│   ├── ast.h              # AST optimizations & transformations
+│   ├── codegen.h          # Code generation logic
+│
+│── src/                   # Source files (.cpp)
+│   ├── lexer.l            # Flex (Lexer)
+│   ├── parser.y           # Bison (Parser)
+│   ├── ast.cpp            # AST manipulation
+│   ├── codegen.cpp        # Code generation (GCC backend)
+│   ├── main.cpp           # Compiler entry point
+│
+│── examples/              # Example .bac programs
+│   ├── test.bac           # Sample BasicCode program
+│
+│── tests/                 # Test cases
+│
+│── CMakeLists.txt         # Build configuration
+│── README.md              # Project documentation
 ```
 
 ---
 
-## **📝 Supported BasicCode Syntax**
-### **🔹 Variables**
-```basiccode
-int x = 10;
-float y = 5.5;
-```
-### **🔹 Conditionals**
-```basiccode
-if (x > 0) {
-   print("Positive Number");
-} else {
-   print("Negative Number");
-}
-```
-### **🔹 Loops**
-```basiccode
-for (int i = 0; i < 5; i++) {
-   print(i);
-}
-```
-### **🔹 Functions**
-```basiccode
-func sum(int a, int b) -> int {
-   return a + b;
-}
-
-int result = sum(5, 10);
+## 📜 Writing a BasicCode (`.bac`) Program  
+Example **`test.bac`** file:  
+```bac
+let x = 10;
+let y = 20;
+let result = x + y;
 print(result);
 ```
 
----
-
-## **❓ Troubleshooting**
-| **Problem**                 | **Solution** |
-|-----------------------------|-------------|
-| `compiler: command not found` | Make sure the build was successful (`mingw32-make`). |
-| `gcc: error: output.c: No such file or directory` | Ensure `compiler` is generating C code correctly. |
+To compile it:  
+```sh
+./mycompiler examples/test.bac -o test.exe
+./test.exe
+```
 
 ---
 
-## **📌 Contributing**
-Want to improve the compiler? Follow these steps:  
-1. **Fork the repository**  
-2. **Create a new branch** (`git checkout -b feature-name`)  
-3. **Make changes & commit** (`git commit -m "Added new feature"`)  
-4. **Push changes** (`git push origin feature-name`)  
-5. **Create a pull request** 🚀  
+## 🔧 Troubleshooting  
+
+### **1️⃣ `CMake Error: No project() command`**
+👉 Edit `CMakeLists.txt` and add this at the top:  
+```cmake
+cmake_minimum_required(VERSION 3.10)
+project(BasicCode-Compiler)
+```
+
+### **2️⃣ `CMake cannot find Flex/Bison`**
+👉 Make sure `win_flex.exe` and `win_bison.exe` are in your PATH.  
+
+### **3️⃣ `GCC Not Found`**
+👉 Run this inside MSYS2 terminal:  
+```sh
+pacman -S mingw-w64-x86_64-gcc
+```
 
 ---
 
-## **📜 License**
+## 🏆 Contributors  
+👤 **Your Name** – Creator & Maintainer  
+
+📢 Want to contribute? Feel free to submit a **Pull Request!** 🎉  
+
+---
+
+## 📜 License  
 This project is **open-source** under the **MIT License**.  
 
+```
+
+---
+
+### **🔥 Next Steps**
+- **✅ Review this `README.md`** to ensure it fits your project.  
+- **✅ Push your project to GitHub.**  
+- **✅ Add example `.bac` programs** in the `examples/` folder.  
+- **✅ Share the repo with your dev friends!**  
+
+Let me know if you need modifications. 🚀
