@@ -1,39 +1,46 @@
 cmake_minimum_required(VERSION 3.15)
 project(BasicCodeCompiler)
 
-# Set C++ Standard
+# C++ standard
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Manually set compilers if using MSYS2
-# Only do this if you're running CMake from outside MSYS2
-set(CMAKE_C_COMPILER "C:/msys64/mingw64/bin/gcc.exe")
-set(CMAKE_CXX_COMPILER "C:/msys64/mingw64/bin/g++.exe")
+# Optional: Uncomment if NOT running from MSYS2 shell
+# set(CMAKE_C_COMPILER "C:/msys64/mingw64/bin/gcc.exe")
+# set(CMAKE_CXX_COMPILER "C:/msys64/mingw64/bin/g++.exe")
 
-# Find Flex & Bison
+# Find Flex and Bison
 find_package(FLEX REQUIRED)
 find_package(BISON REQUIRED)
 
 # Flex & Bison targets
-FLEX_TARGET(Lexer src/lexer.l ${CMAKE_BINARY_DIR}/lexer.cpp)
-BISON_TARGET(Parser src/parser.y ${CMAKE_BINARY_DIR}/parser.cpp)
+FLEX_TARGET(Lexer
+    ${PROJECT_SOURCE_DIR}/src/lexer.l
+    ${CMAKE_BINARY_DIR}/lexer.cpp
+)
+
+BISON_TARGET(Parser
+    ${PROJECT_SOURCE_DIR}/src/parser.y
+    ${CMAKE_BINARY_DIR}/parser.cpp
+    DEFINES_FILE ${CMAKE_BINARY_DIR}/parser.tab.h
+)
+
 ADD_FLEX_BISON_DEPENDENCY(Lexer Parser)
 
-# Source files
+# Sources
 set(SOURCES
     src/main.cpp
     src/ast.cpp
     src/codegen.cpp
-    ${BISON_Parser_OUTPUTS}
     ${FLEX_Lexer_OUTPUTS}
+    ${BISON_Parser_OUTPUTS}
 )
 
-# Headers
-include_directories(${CMAKE_BINARY_DIR} include)
+# Includes
+include_directories(
+    ${PROJECT_SOURCE_DIR}/include
+    ${CMAKE_BINARY_DIR}  # Needed for parser.tab.h
+)
 
 # Executable
 add_executable(mycompiler ${SOURCES})
-
-# This line is not necessary:
-# target_link_libraries(mycompiler stdc++) 
-# C++ linking is handled automatically by CMake.
