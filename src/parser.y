@@ -1,0 +1,254 @@
+%{
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <memory>
+#include <vector>
+#include <string>
+
+#include "../include/ast.h"
+#include "../include/symboltable.h"
+#include "../include/error.h"
+
+using ASTNodePtr = std::shared_ptr<ASTNode>;
+using ASTNodeList = std::vector<ASTNodePtr>;
+
+extern int yylineno;
+extern int yylex();
+int yyerror(const char *msg);
+
+ASTNodePtr root = nullptr;
+%}
+
+%union {
+    int intVal;
+    float floatVal;
+    bool boolean;
+    char* str;
+    void* ptr;
+}
+
+%token <str> IDENTIFIER STRING_LITERAL
+%token <intVal> INT_LITERAL
+%token <floatVal> FLOAT_LITERAL
+%token <boolean> BOOLEAN_LITERAL
+%token PRINT
+
+
+%token LET IF ELSE WHILE FOR RETURN FUNC
+%token INT_TYPE FLOAT_TYPE BOOL_TYPE STRING_TYPE VOID_TYPE
+%token EQ NEQ LE GE LT GT
+%token AND OR NOT
+%token PLUS MINUS MUL DIV MOD
+%token ASSIGN
+%token LPAREN RPAREN LBRACE RBRACE COMMA SEMICOLON
+%token INVALID
+
+%left OR
+%left AND
+%left EQ NEQ
+%left LT LE GT GE
+%left PLUS MINUS
+%left MUL DIV MOD
+%right NOT
+
+%type <ptr> program statement expression block declaration assignment function call return_stmt if_stmt while_stmt for_stmt
+%type <ptr> statements args opt_args
+
+%start program
+%%
+
+program:
+    statements {
+        root = std::make_shared<ASTNode>(NodeType::Program);
+        auto list = static_cast<ASTNodeList*>($1);
+        root->children = *list;
+        delete list;
+    }
+;
+
+statements:
+    statement {
+        auto list = new ASTNodeList();
+        list->push_back(*static_cast<ASTNodePtr*>($1));
+        delete static_cast<ASTNodePtr*>($1);
+        $$ = list;
+    }
+    | statements statement {
+        auto list = static_cast<ASTNodeList*>($1);
+        list->push_back(*static_cast<ASTNodePtr*>($2));
+        delete static_cast<ASTNodePtr*>($2);
+        $$ = list;
+    }
+    
+
+;
+
+statement:
+      declaration SEMICOLON       { $$ = $1; }
+    | assignment SEMICOLON        { $$ = $1; }
+    | function                    { $$ = $1; }
+    | return_stmt SEMICOLON       { $$ = $1; }
+    | if_stmt                     { $$ = $1; }
+    | while_stmt                  { $$ = $1; }
+    | for_stmt                    { $$ = $1; }
+    | expression SEMICOLON        { $$ = $1; }
+    | block                       { $$ = $1; }
+    | PRINT LPAREN expression RPAREN SEMICOLON {
+        auto node = std::make_shared<ASTNode>(NodeType::FunctionCall, "print");
+        node->children.push_back(*static_cast<ASTNodePtr*>($3));
+        delete static_cast<ASTNodePtr*>($3);
+        $$ = new ASTNodePtr(node);
+    }
+;
+
+
+block:
+    LBRACE statements RBRACE {
+        auto node = std::make_shared<ASTNode>(NodeType::Block);
+        node->children = *static_cast<ASTNodeList*>($2);
+        delete static_cast<ASTNodeList*>($2);
+        $$ = new ASTNodePtr(node);
+    }
+;
+
+declaration:
+    LET IDENTIFIER ASSIGN expression {
+        auto node = std::make_shared<ASTNode>(NodeType::Declaration, std::string($2));
+        node->children.push_back(*static_cast<ASTNodePtr*>($4));
+        delete static_cast<ASTNodePtr*>($4);
+        $$ = new ASTNodePtr(node);
+    }
+;
+
+
+assignment:
+    IDENTIFIER ASSIGN expression {
+        auto node = std::make_shared<ASTNode>(NodeType::Assignment, std::string($1));
+        node->children.push_back(*static_cast<ASTNodePtr*>($3));
+        delete static_cast<ASTNodePtr*>($3);
+        $$ = new ASTNodePtr(node);
+    }
+;
+
+
+function:
+    FUNC IDENTIFIER LPAREN opt_args RPAREN block {
+        auto node = std::make_shared<ASTNode>(NodeType::Function, std::string($2));
+        auto args = static_cast<ASTNodeList*>($4);
+        for (auto& arg : *args) node->children.push_back(arg);
+        delete args;
+        node->children.push_back(*static_cast<ASTNodePtr*>($6));
+        delete static_cast<ASTNodePtr*>($6);
+        $$ = new ASTNodePtr(node);
+    }
+;
+
+
+opt_args:
+    /* empty */ { $$ = new ASTNodeList(); }
+    | args      { $$ = $1; }
+;
+
+args:
+    IDENTIFIER {
+        auto list = new ASTNodeList();
+        list->push_back(std::make_shared<ASTNode>(NodeType::Argument, std::string($1)));
+        $$ = list;
+    }
+    | args COMMA IDENTIFIER {
+        auto list = static_cast<ASTNodeList*>($1);
+        list->push_back(std::make_shared<ASTNode>(NodeType::Argument, std::string($3)));
+        $$ = list;
+    }
+;
+
+
+return_stmt:
+    RETURN expression {
+        auto node = std::make_shared<ASTNode>(NodeType::Return);
+        node->children.push_back(*static_cast<ASTNodePtr*>($2));
+        delete static_cast<ASTNodePtr*>($2);
+        $$ = new ASTNodePtr(node);
+    }
+;
+
+if_stmt:
+    IF LPAREN expression RPAREN block {
+        auto node = std::make_shared<ASTNode>(NodeType::If);
+        node->children.push_back(*static_cast<ASTNodePtr*>($3));
+        node->children.push_back(*static_cast<ASTNodePtr*>($5));
+        delete static_cast<ASTNodePtr*>($3);
+        delete static_cast<ASTNodePtr*>($5);
+        $$ = new ASTNodePtr(node);
+    }
+    | IF LPAREN expression RPAREN block ELSE block {
+        auto node = std::make_shared<ASTNode>(NodeType::IfElse);
+        node->children.push_back(*static_cast<ASTNodePtr*>($3));
+        node->children.push_back(*static_cast<ASTNodePtr*>($5));
+        node->children.push_back(*static_cast<ASTNodePtr*>($7));
+        delete static_cast<ASTNodePtr*>($3);
+        delete static_cast<ASTNodePtr*>($5);
+        delete static_cast<ASTNodePtr*>($7);
+        $$ = new ASTNodePtr(node);
+    }
+;
+
+while_stmt:
+    WHILE LPAREN expression RPAREN block {
+        auto node = std::make_shared<ASTNode>(NodeType::While);
+        node->children.push_back(*static_cast<ASTNodePtr*>($3));
+        node->children.push_back(*static_cast<ASTNodePtr*>($5));
+        delete static_cast<ASTNodePtr*>($3);
+        delete static_cast<ASTNodePtr*>($5);
+        $$ = new ASTNodePtr(node);
+    }
+;
+
+for_stmt:
+    FOR LPAREN assignment SEMICOLON expression SEMICOLON assignment RPAREN block {
+        auto node = std::make_shared<ASTNode>(NodeType::For);
+        node->children.push_back(*static_cast<ASTNodePtr*>($3));
+        node->children.push_back(*static_cast<ASTNodePtr*>($5));
+        node->children.push_back(*static_cast<ASTNodePtr*>($7));
+        node->children.push_back(*static_cast<ASTNodePtr*>($9));
+        delete static_cast<ASTNodePtr*>($3);
+        delete static_cast<ASTNodePtr*>($5);
+        delete static_cast<ASTNodePtr*>($7);
+        delete static_cast<ASTNodePtr*>($9);
+        $$ = new ASTNodePtr(node);
+    }
+;
+
+expression:
+      INT_LITERAL      { $$ = new ASTNodePtr(std::make_shared<ASTNode>(NodeType::IntLiteral, $1)); }
+    | FLOAT_LITERAL    { $$ = new ASTNodePtr(std::make_shared<ASTNode>(NodeType::FloatLiteral, $1)); }
+    | STRING_LITERAL   { $$ = new ASTNodePtr(std::make_shared<ASTNode>(NodeType::StringLiteral, $1)); }
+    | BOOLEAN_LITERAL  { $$ = new ASTNodePtr(std::make_shared<ASTNode>(NodeType::BoolLiteral, $1)); }
+    expression:
+    IDENTIFIER {
+        $$ = new ASTNodePtr(std::make_shared<ASTNode>(NodeType::Identifier, std::string($1)));
+    }
+    | expression PLUS expression  { $$ = new ASTNodePtr(std::make_shared<ASTNode>(NodeType::BinaryOp, "+", *static_cast<ASTNodePtr*>($1), *static_cast<ASTNodePtr*>($3))); delete static_cast<ASTNodePtr*>($1); delete static_cast<ASTNodePtr*>($3); }
+    | LPAREN expression RPAREN   { $$ = $2; }
+    | call                       { $$ = $1; }
+;
+
+call:
+    IDENTIFIER LPAREN opt_args RPAREN {
+        auto node = std::make_shared<ASTNode>(NodeType::FunctionCall, std::string($1));
+        auto args = static_cast<ASTNodeList*>($3);
+        for (auto& arg : *args)
+            node->children.push_back(arg);
+        delete args;
+        $$ = new ASTNodePtr(node);
+    }
+;
+
+
+%%
+
+int yyerror(const char* msg) {
+    reportError(ErrorType::SyntaxError, msg, yylineno);
+    return 0;
+}

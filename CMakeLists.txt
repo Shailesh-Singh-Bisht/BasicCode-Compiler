@@ -32,6 +32,8 @@ set(SOURCES
     src/main.cpp
     src/ast.cpp
     src/codegen.cpp
+    src/error.cpp          # ✅ Added
+    src/symboltable.cpp    # ✅ Added
     ${FLEX_Lexer_OUTPUTS}
     ${BISON_Parser_OUTPUTS}
 )
