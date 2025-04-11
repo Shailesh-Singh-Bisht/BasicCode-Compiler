@@ -13,9 +13,12 @@ ASTNode::ASTNode(NodeType type, bool value)
     : type(type), boolVal(value), valueType(VarType::Bool) {}
 
 ASTNode::ASTNode(NodeType type, const std::string &value)
-    : type(type), strVal(value) {
-        std::cerr << "[AST DEBUG] String constructor: " << value << "\n";
-    }
+    : type(type), strVal(value)
+{
+    std::cerr << "[AST DEBUG] String constructor: " << value << "\n";
+    std::cerr << "[AST DEBUG] StringLiteral value stored: " << value << "\n";
+
+}
 
 ASTNode::ASTNode(NodeType type, const std::string &op,
                  std::shared_ptr<ASTNode> lhs, std::shared_ptr<ASTNode> rhs)
@@ -73,6 +76,9 @@ std::string nodeTypeToString(NodeType type)
 
 void ASTNode::print(int indent) const
 {
+    if (type == NodeType::FunctionCall)
+        std::cout << " = " << strVal;
+
     for (int i = 0; i < indent; ++i)
         std::cout << "  ";
     std::cout << nodeTypeToString(type);

@@ -58,7 +58,15 @@ STRING      \"([^\\\"]|\\.)*\"
 ","         { return COMMA; }
 ";"         { return SEMICOLON; }
 
-{STRING}            { yylval.str = strdup(yytext); return STRING_LITERAL; }
+{STRING} {
+    printf("[LEX DEBUG] Raw STRING matched: %s\n", yytext);
+    std::string raw(yytext);
+    raw = raw.substr(1, raw.length() - 2); // remove the quotes
+    yylval.str = strdup(raw.c_str());
+    return STRING_LITERAL;
+}
+
+
 {DIGIT}+"."{DIGIT}+      { yylval.floatVal = atof(yytext); return FLOAT_LITERAL; }
 
 {DIGIT}+            { yylval.intVal = atoi(yytext); return INT_LITERAL; }

@@ -40,7 +40,9 @@ void CodeGenerator::generateStatement(const std::shared_ptr<ASTNode> &node, std:
 {
     if (!node)
         return;
-    std::cerr << "Generating Declaration for: " << node->strVal << "\n";
+
+        std::cerr << "Generating Statement for: " << nodeTypeToString(node->type) << " = " << node->strVal << "\n";
+
 
     switch (node->type)
     {
@@ -111,9 +113,7 @@ void CodeGenerator::generateStatement(const std::shared_ptr<ASTNode> &node, std:
         for (const auto &child : node->children)
         {
             if (child->type == NodeType::Block)
-            {
                 generateStatement(child, out);
-            }
         }
         break;
 
@@ -127,29 +127,35 @@ void CodeGenerator::generateStatement(const std::shared_ptr<ASTNode> &node, std:
     case NodeType::FunctionCall:
         if (node->strVal == "print")
         {
-            out << "printf(";
+            std::cerr << "[CODEGEN DEBUG] Generating print() with arg type: " 
+            << nodeTypeToString(node->children[0]->type) << "\n";
+            std::cerr << "print() raw child strVal: " << node->children[0]->strVal << "\n";
             const auto &arg = node->children[0];
-
             switch (arg->type)
             {
             case NodeType::StringLiteral:
-                out << arg->strVal;
+                out << "printf(\"%s\", ";
+                break;
+            case NodeType::FloatLiteral:
+                out << "printf(\"%f\", ";
+                break;
+            case NodeType::BoolLiteral:
+                out << "printf(\"%s\", ";
                 break;
             case NodeType::IntLiteral:
             case NodeType::Identifier:
             case NodeType::BinaryOp:
-                out << "\"%d\", ";
-                generateExpression(arg, out);
+                out << "printf(\"%d\", ";
                 break;
             default:
-                out << "\"<unsupported>\"";
+                out << "printf(\"<unsupported>\", ";
+                break;
             }
-
+            generateExpression(arg, out);
             out << ");\n";
         }
         else
         {
-            // general function call
             generateExpression(node, out);
             out << ";\n";
         }
@@ -163,8 +169,7 @@ void CodeGenerator::generateStatement(const std::shared_ptr<ASTNode> &node, std:
 
 void CodeGenerator::generateExpression(const std::shared_ptr<ASTNode> &node, std::ostream &out)
 {
-    if (!node)
-        return;
+    if (!node) return;
 
     switch (node->type)
     {
@@ -202,42 +207,16 @@ void CodeGenerator::generateExpression(const std::shared_ptr<ASTNode> &node, std
         break;
 
     case NodeType::FunctionCall:
-        if (node->strVal == "print")
-        {
-            out << "printf(";
-
-            if (!node->children.empty())
-            {
-                const auto &arg = node->children[0];
-                switch (arg->type)
-                {
-                case NodeType::IntLiteral:
-                case NodeType::Identifier:
-                    out << "\"%d\", ";
-                    break;
-                case NodeType::FloatLiteral:
-                    out << "\"%f\", ";
-                    break;
-                case NodeType::StringLiteral:
-                    out << "\"%s\", ";
-                    break;
-                case NodeType::BoolLiteral:
-                    out << "\"%s\", ";
-                    break;
-                default:
-                    out << "\"<expr>\", ";
-                    break;
-                }
-                generateExpression(arg, out);
+        if (node->strVal == "print") {
+            out << "/* print() used as expression — invalid */";
+        } else {
+            out << node->strVal << "(";
+            for (size_t i = 0; i < node->children.size(); ++i) {
+                generateExpression(node->children[i], out);
+                if (i + 1 < node->children.size())
+                    out << ", ";
             }
-
-            out << ");\n";
-            out << "printf(\"\\n\");\n"; // newline after print
-        }
-        else
-        {
-            generateExpression(node, out);
-            out << ";\n";
+            out << ")\n";
         }
         break;
 

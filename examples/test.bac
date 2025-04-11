@@ -1,4 +1,7 @@
 func main() {
+    print("\n");
     let x = 42;
-    return x;
+    print(x);
+    print("\n");
+    print("Hello");
 }

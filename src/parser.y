@@ -85,14 +85,7 @@ statements:
 ;
 
 statement:
-       PRINT LPAREN expression RPAREN SEMICOLON {
-         printf(">>> PARSER: Matched print(expr);\n");
-        auto node = std::make_shared<ASTNode>(NodeType::FunctionCall, "print");
-        node->children.push_back(*static_cast<ASTNodePtr*>($3));
-        delete static_cast<ASTNodePtr*>($3);
-        $$ = new ASTNodePtr(node);
-    }
-    | declaration SEMICOLON       { $$ = $1; }
+      declaration SEMICOLON       { $$ = $1; }
     | assignment SEMICOLON        { $$ = $1; }
     | function                    { $$ = $1; }
     | return_stmt SEMICOLON       { $$ = $1; }
@@ -101,6 +94,14 @@ statement:
     | for_stmt                    { $$ = $1; }
     | expression SEMICOLON        { $$ = $1; }
     | block                       { $$ = $1; }
+    | PRINT LPAREN expression RPAREN SEMICOLON {
+    fprintf(stderr, ">>> PARSER: Matched print(expr);\n");
+    auto node = std::make_shared<ASTNode>(NodeType::FunctionCall, std::string("print")); 
+    node->children.push_back(*static_cast<ASTNodePtr*>($3));
+    $$ = new ASTNodePtr(node);
+    delete static_cast<ASTNodePtr*>($3);
+}
+
 
 ;
 
@@ -225,29 +226,40 @@ for_stmt:
 expression:
       INT_LITERAL      { $$ = new ASTNodePtr(std::make_shared<ASTNode>(NodeType::IntLiteral, $1)); }
     | FLOAT_LITERAL    { $$ = new ASTNodePtr(std::make_shared<ASTNode>(NodeType::FloatLiteral, $1)); }
-    | STRING_LITERAL   { $$ = new ASTNodePtr(std::make_shared<ASTNode>(NodeType::StringLiteral, $1)); }
-    | BOOLEAN_LITERAL  { $$ = new ASTNodePtr(std::make_shared<ASTNode>(NodeType::BoolLiteral, $1)); }
-    expression:
-    IDENTIFIER {
-        $$ = new ASTNodePtr(std::make_shared<ASTNode>(NodeType::Identifier, std::string($1)));
+   | STRING_LITERAL {
+    std::string raw($1);
+    if (!raw.empty() && raw.length() >= 2 && raw.front() == '"' && raw.back() == '"') {
+        raw = raw.substr(1, raw.length() - 2);  // remove surrounding quotes
     }
-    | expression PLUS expression  { $$ = new ASTNodePtr(std::make_shared<ASTNode>(NodeType::BinaryOp, "+", *static_cast<ASTNodePtr*>($1), *static_cast<ASTNodePtr*>($3))); delete static_cast<ASTNodePtr*>($1); delete static_cast<ASTNodePtr*>($3); }
+    $$ = new ASTNodePtr(std::make_shared<ASTNode>(NodeType::StringLiteral, raw));
+    free($1);  // since strdup() was used in lexer
+}
+    | BOOLEAN_LITERAL  { $$ = new ASTNodePtr(std::make_shared<ASTNode>(NodeType::BoolLiteral, $1)); }
+    | IDENTIFIER       { $$ = new ASTNodePtr(std::make_shared<ASTNode>(NodeType::Identifier, std::string($1))); }
+   | expression PLUS expression {
+        auto left = *static_cast<ASTNodePtr*>($1);
+        auto right = *static_cast<ASTNodePtr*>($3);
+        $$ = new ASTNodePtr(std::make_shared<ASTNode>(NodeType::BinaryOp, "+", left, right));
+        delete static_cast<ASTNodePtr*>($1);
+        delete static_cast<ASTNodePtr*>($3);
+    }
     | LPAREN expression RPAREN   { $$ = $2; }
-    | call                       { $$ = $1; }
+    | call                         { $$ = $1; }  
 ;
 
 call:
     IDENTIFIER LPAREN opt_args RPAREN {
-          printf(">>> call() matched function: %s\n", $1);
-        auto node = std::make_shared<ASTNode>(NodeType::FunctionCall, std::string($1));
-        auto args = static_cast<ASTNodeList*>($3);
-        for (auto& arg : *args)
-            node->children.push_back(arg);
-        delete args;
-        $$ = new ASTNodePtr(node);
+        if (std::string($1) == "print") {
+            reportError(ErrorType::SemanticError, "print() cannot be used as expression", yylineno);
+            $$ = new ASTNodePtr(nullptr); // handle gracefully
+        } else {
+            auto node = std::make_shared<ASTNode>(NodeType::FunctionCall, std::string($1));
+            auto args = static_cast<ASTNodeList*>($3);
+            for (auto& arg : *args) node->children.push_back(arg);
+            delete args;
+            $$ = new ASTNodePtr(node);
+        }
     }
-;
-
 
 %%
 
