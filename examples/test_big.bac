@@ -1,10 +1,32 @@
-func main() {
-    let x = 10;
-    let y = 20;
+func main(){
+    let a=10;
+    let b=20;
+    let c=a+b;
 
-    if (x > y) {
-        print("\n x is greater than y \n");
-    } else {
-        print("x is not greater than y \n");
+    print("\n The sum is: ");
+    print(c);
+
+    if(a<b){
+        print("\n a is lesser than b\n");
     }
+    else{
+        print("\n a is greater than b\n");
+    }
+
+    let i=0;
+    print("\n The while loop:\n");
+
+    while(i<5){
+        print(i);
+        print("\n");
+        i=i+1;
+    }
+
+    print("\n The for loop:\n");
+    for(i=0;i<10;i=i+1){
+        print(i);
+        print("\n");
+    }
+    
+
 }

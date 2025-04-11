@@ -41,8 +41,7 @@ void CodeGenerator::generateStatement(const std::shared_ptr<ASTNode> &node, std:
     if (!node)
         return;
 
-        std::cerr << "Generating Statement for: " << nodeTypeToString(node->type) << " = " << node->strVal << "\n";
-
+    std::cerr << "Generating Statement for: " << nodeTypeToString(node->type) << " = " << node->strVal << "\n";
 
     switch (node->type)
     {
@@ -83,9 +82,9 @@ void CodeGenerator::generateStatement(const std::shared_ptr<ASTNode> &node, std:
 
     case NodeType::While:
         out << "while (";
-        generateExpression(node->children[0], out);
+        generateExpression(node->children[0], out); // condition
         out << ") ";
-        generateStatement(node->children[1], out);
+        generateStatement(node->children[1], out); // body
         break;
 
     case NodeType::For:
@@ -101,11 +100,11 @@ void CodeGenerator::generateStatement(const std::shared_ptr<ASTNode> &node, std:
             generateExpression(node->children[0]->children[0], out);
         }
         out << "; ";
-        generateExpression(node->children[1], out);
+        generateExpression(node->children[1], out); // condition
         out << "; ";
-        generateExpression(node->children[2], out);
+        generateExpression(node->children[2], out); // update
         out << ") ";
-        generateStatement(node->children[3], out);
+        generateStatement(node->children[3], out); // body
         break;
 
     case NodeType::Function:
@@ -127,8 +126,8 @@ void CodeGenerator::generateStatement(const std::shared_ptr<ASTNode> &node, std:
     case NodeType::FunctionCall:
         if (node->strVal == "print")
         {
-            std::cerr << "[CODEGEN DEBUG] Generating print() with arg type: " 
-            << nodeTypeToString(node->children[0]->type) << "\n";
+            std::cerr << "[CODEGEN DEBUG] Generating print() with arg type: "
+                      << nodeTypeToString(node->children[0]->type) << "\n";
             std::cerr << "print() raw child strVal: " << node->children[0]->strVal << "\n";
             const auto &arg = node->children[0];
             switch (arg->type)
@@ -169,10 +168,16 @@ void CodeGenerator::generateStatement(const std::shared_ptr<ASTNode> &node, std:
 
 void CodeGenerator::generateExpression(const std::shared_ptr<ASTNode> &node, std::ostream &out)
 {
-    if (!node) return;
+    if (!node)
+        return;
 
     switch (node->type)
     {
+    case NodeType::Assignment:
+        out << node->strVal << " = ";
+        generateExpression(node->children[0], out);
+        break;
+
     case NodeType::IntLiteral:
         out << node->intVal;
         break;
@@ -207,11 +212,15 @@ void CodeGenerator::generateExpression(const std::shared_ptr<ASTNode> &node, std
         break;
 
     case NodeType::FunctionCall:
-        if (node->strVal == "print") {
+        if (node->strVal == "print")
+        {
             out << "/* print() used as expression — invalid */";
-        } else {
+        }
+        else
+        {
             out << node->strVal << "(";
-            for (size_t i = 0; i < node->children.size(); ++i) {
+            for (size_t i = 0; i < node->children.size(); ++i)
+            {
                 generateExpression(node->children[i], out);
                 if (i + 1 < node->children.size())
                     out << ", ";

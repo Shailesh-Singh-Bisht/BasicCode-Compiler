@@ -200,21 +200,22 @@ if_stmt:
 while_stmt:
     WHILE LPAREN expression RPAREN block {
         auto node = std::make_shared<ASTNode>(NodeType::While);
-        node->children.push_back(*static_cast<ASTNodePtr*>($3));
-        node->children.push_back(*static_cast<ASTNodePtr*>($5));
+        node->children.push_back(*static_cast<ASTNodePtr*>($3)); // condition
+        node->children.push_back(*static_cast<ASTNodePtr*>($5)); // body
         delete static_cast<ASTNodePtr*>($3);
         delete static_cast<ASTNodePtr*>($5);
         $$ = new ASTNodePtr(node);
     }
 ;
 
+
 for_stmt:
     FOR LPAREN assignment SEMICOLON expression SEMICOLON assignment RPAREN block {
         auto node = std::make_shared<ASTNode>(NodeType::For);
-        node->children.push_back(*static_cast<ASTNodePtr*>($3));
-        node->children.push_back(*static_cast<ASTNodePtr*>($5));
-        node->children.push_back(*static_cast<ASTNodePtr*>($7));
-        node->children.push_back(*static_cast<ASTNodePtr*>($9));
+        node->children.push_back(*static_cast<ASTNodePtr*>($3)); // init (assignment)
+        node->children.push_back(*static_cast<ASTNodePtr*>($5)); // condition (expression)
+        node->children.push_back(*static_cast<ASTNodePtr*>($7)); // update (assignment)
+        node->children.push_back(*static_cast<ASTNodePtr*>($9)); // body (block)
         delete static_cast<ASTNodePtr*>($3);
         delete static_cast<ASTNodePtr*>($5);
         delete static_cast<ASTNodePtr*>($7);
@@ -222,6 +223,8 @@ for_stmt:
         $$ = new ASTNodePtr(node);
     }
 ;
+
+
 
 expression:
       INT_LITERAL      { $$ = new ASTNodePtr(std::make_shared<ASTNode>(NodeType::IntLiteral, $1)); }
