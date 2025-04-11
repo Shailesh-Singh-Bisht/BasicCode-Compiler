@@ -226,23 +226,32 @@ for_stmt:
 expression:
       INT_LITERAL      { $$ = new ASTNodePtr(std::make_shared<ASTNode>(NodeType::IntLiteral, $1)); }
     | FLOAT_LITERAL    { $$ = new ASTNodePtr(std::make_shared<ASTNode>(NodeType::FloatLiteral, $1)); }
-   | STRING_LITERAL {
-    std::string raw($1);
-    if (!raw.empty() && raw.length() >= 2 && raw.front() == '"' && raw.back() == '"') {
+    | STRING_LITERAL {
+     std::string raw($1);
+     if (!raw.empty() && raw.length() >= 2 && raw.front() == '"' && raw.back() == '"') {
         raw = raw.substr(1, raw.length() - 2);  // remove surrounding quotes
+     }
+     $$ = new ASTNodePtr(std::make_shared<ASTNode>(NodeType::StringLiteral, raw));
+     free($1);  // since strdup() was used in lexer
     }
-    $$ = new ASTNodePtr(std::make_shared<ASTNode>(NodeType::StringLiteral, raw));
-    free($1);  // since strdup() was used in lexer
-}
     | BOOLEAN_LITERAL  { $$ = new ASTNodePtr(std::make_shared<ASTNode>(NodeType::BoolLiteral, $1)); }
     | IDENTIFIER       { $$ = new ASTNodePtr(std::make_shared<ASTNode>(NodeType::Identifier, std::string($1))); }
-   | expression PLUS expression {
+    | expression PLUS expression {
         auto left = *static_cast<ASTNodePtr*>($1);
         auto right = *static_cast<ASTNodePtr*>($3);
         $$ = new ASTNodePtr(std::make_shared<ASTNode>(NodeType::BinaryOp, "+", left, right));
         delete static_cast<ASTNodePtr*>($1);
         delete static_cast<ASTNodePtr*>($3);
     }
+    | expression MINUS expression { $$ = new ASTNodePtr(std::make_shared<ASTNode>(NodeType::BinaryOp, "-", *static_cast<ASTNodePtr*>($1), *static_cast<ASTNodePtr*>($3))); delete static_cast<ASTNodePtr*>($1); delete static_cast<ASTNodePtr*>($3); }
+    | expression MUL expression   { $$ = new ASTNodePtr(std::make_shared<ASTNode>(NodeType::BinaryOp, "*", *static_cast<ASTNodePtr*>($1), *static_cast<ASTNodePtr*>($3))); delete static_cast<ASTNodePtr*>($1); delete static_cast<ASTNodePtr*>($3); }
+    | expression DIV expression   { $$ = new ASTNodePtr(std::make_shared<ASTNode>(NodeType::BinaryOp, "/", *static_cast<ASTNodePtr*>($1), *static_cast<ASTNodePtr*>($3))); delete static_cast<ASTNodePtr*>($1); delete static_cast<ASTNodePtr*>($3); }
+    | expression LT expression    { $$ = new ASTNodePtr(std::make_shared<ASTNode>(NodeType::BinaryOp, "<", *static_cast<ASTNodePtr*>($1), *static_cast<ASTNodePtr*>($3))); delete static_cast<ASTNodePtr*>($1); delete static_cast<ASTNodePtr*>($3); }
+    | expression GT expression    { $$ = new ASTNodePtr(std::make_shared<ASTNode>(NodeType::BinaryOp, ">", *static_cast<ASTNodePtr*>($1), *static_cast<ASTNodePtr*>($3))); delete static_cast<ASTNodePtr*>($1); delete static_cast<ASTNodePtr*>($3); }
+    | expression EQ expression    { $$ = new ASTNodePtr(std::make_shared<ASTNode>(NodeType::BinaryOp, "==", *static_cast<ASTNodePtr*>($1), *static_cast<ASTNodePtr*>($3))); delete static_cast<ASTNodePtr*>($1); delete static_cast<ASTNodePtr*>($3); }
+    | expression NEQ expression   { $$ = new ASTNodePtr(std::make_shared<ASTNode>(NodeType::BinaryOp, "!=", *static_cast<ASTNodePtr*>($1), *static_cast<ASTNodePtr*>($3))); delete static_cast<ASTNodePtr*>($1); delete static_cast<ASTNodePtr*>($3); }
+    | expression LE expression    { $$ = new ASTNodePtr(std::make_shared<ASTNode>(NodeType::BinaryOp, "<=", *static_cast<ASTNodePtr*>($1), *static_cast<ASTNodePtr*>($3))); delete static_cast<ASTNodePtr*>($1); delete static_cast<ASTNodePtr*>($3); }
+    | expression GE expression    { $$ = new ASTNodePtr(std::make_shared<ASTNode>(NodeType::BinaryOp, ">=", *static_cast<ASTNodePtr*>($1), *static_cast<ASTNodePtr*>($3))); delete static_cast<ASTNodePtr*>($1); delete static_cast<ASTNodePtr*>($3); }
     | LPAREN expression RPAREN   { $$ = $2; }
     | call                         { $$ = $1; }  
 ;

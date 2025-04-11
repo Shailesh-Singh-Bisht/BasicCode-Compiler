@@ -1,25 +1,10 @@
 func main() {
     let x = 10;
-    let y = 5;
-    let z = x + y;
+    let y = 20;
 
-    print(z);  // 15
-
-    if (z > 10) {
-        print("z is greater than 10");
+    if (x > y) {
+        print("\n x is greater than y \n");
     } else {
-        print("z is 10 or less");
+        print("x is not greater than y \n");
     }
-
-    let count = 0;
-    while (count < 3) {
-        print(count);
-        count = count + 1;
-    }
-
-    for (let i = 0; i < 3; i = i + 1) {
-        print(i);
-    }
-
-    return z;
 }
