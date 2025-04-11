@@ -85,7 +85,14 @@ statements:
 ;
 
 statement:
-      declaration SEMICOLON       { $$ = $1; }
+       PRINT LPAREN expression RPAREN SEMICOLON {
+         printf(">>> PARSER: Matched print(expr);\n");
+        auto node = std::make_shared<ASTNode>(NodeType::FunctionCall, "print");
+        node->children.push_back(*static_cast<ASTNodePtr*>($3));
+        delete static_cast<ASTNodePtr*>($3);
+        $$ = new ASTNodePtr(node);
+    }
+    | declaration SEMICOLON       { $$ = $1; }
     | assignment SEMICOLON        { $$ = $1; }
     | function                    { $$ = $1; }
     | return_stmt SEMICOLON       { $$ = $1; }
@@ -94,12 +101,7 @@ statement:
     | for_stmt                    { $$ = $1; }
     | expression SEMICOLON        { $$ = $1; }
     | block                       { $$ = $1; }
-    | PRINT LPAREN expression RPAREN SEMICOLON {
-        auto node = std::make_shared<ASTNode>(NodeType::FunctionCall, "print");
-        node->children.push_back(*static_cast<ASTNodePtr*>($3));
-        delete static_cast<ASTNodePtr*>($3);
-        $$ = new ASTNodePtr(node);
-    }
+
 ;
 
 
@@ -236,6 +238,7 @@ expression:
 
 call:
     IDENTIFIER LPAREN opt_args RPAREN {
+          printf(">>> call() matched function: %s\n", $1);
         auto node = std::make_shared<ASTNode>(NodeType::FunctionCall, std::string($1));
         auto args = static_cast<ASTNodeList*>($3);
         for (auto& arg : *args)

@@ -64,6 +64,15 @@ STRING      \"([^\\\"]|\\.)*\"
 {DIGIT}+            { yylval.intVal = atoi(yytext); return INT_LITERAL; }
 
 {ID_START}{ID_CHAR}* {
+     if (strcmp(yytext, "let") == 0) return LET;
+    if (strcmp(yytext, "func") == 0) return FUNC;
+    if (strcmp(yytext, "if") == 0) return IF;
+    if (strcmp(yytext, "else") == 0) return ELSE;
+    if (strcmp(yytext, "while") == 0) return WHILE;
+    if (strcmp(yytext, "for") == 0) return FOR;
+    if (strcmp(yytext, "return") == 0) return RETURN;
+    if (strcmp(yytext, "print") == 0) return PRINT;
+    
     printf("IDENTIFIER FOUND: %s\n", yytext);
     yylval.str = strdup(yytext);
     return IDENTIFIER;

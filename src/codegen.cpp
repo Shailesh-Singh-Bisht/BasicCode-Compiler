@@ -129,10 +129,11 @@ void CodeGenerator::generateStatement(const std::shared_ptr<ASTNode> &node, std:
         {
             out << "printf(";
             const auto &arg = node->children[0];
+
             switch (arg->type)
             {
             case NodeType::StringLiteral:
-                out << "\"" << arg->strVal << "\"";
+                out << arg->strVal;
                 break;
             case NodeType::IntLiteral:
             case NodeType::Identifier:
@@ -143,6 +144,7 @@ void CodeGenerator::generateStatement(const std::shared_ptr<ASTNode> &node, std:
             default:
                 out << "\"<unsupported>\"";
             }
+
             out << ");\n";
         }
         else
