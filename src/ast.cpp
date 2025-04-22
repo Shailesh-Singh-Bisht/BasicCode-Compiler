@@ -15,6 +15,10 @@ ASTNode::ASTNode(NodeType type, bool value)
 ASTNode::ASTNode(NodeType type, const std::string &value)
     : type(type), strVal(value)
 {
+    // For declaration nodes, inherit the value type from the initializer if it exists
+    if (type == NodeType::Declaration && !children.empty()) {
+        valueType = children[0]->valueType;
+    }
     std::cerr << "[AST DEBUG] String constructor: " << value << "\n";
     std::cerr << "[AST DEBUG] StringLiteral value stored: " << value << "\n";
 

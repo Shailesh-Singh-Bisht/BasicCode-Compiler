@@ -18,6 +18,7 @@ extern int yylex();
 int yyerror(const char *msg);
 
 ASTNodePtr root = nullptr;
+SymbolTable symbolTable;  // Global symbol table instance
 %}
 
 %union {
@@ -107,10 +108,13 @@ statement:
 
 
 block:
-    LBRACE statements RBRACE {
+    LBRACE {
+        symbolTable.enterScope();
+    } statements RBRACE {
         auto node = std::make_shared<ASTNode>(NodeType::Block);
-        node->children = *static_cast<ASTNodeList*>($2);
-        delete static_cast<ASTNodeList*>($2);
+        node->children = *static_cast<ASTNodeList*>($3);
+        delete static_cast<ASTNodeList*>($3);
+        symbolTable.exitScope();
         $$ = new ASTNodePtr(node);
     }
 ;
@@ -118,7 +122,13 @@ block:
 declaration:
     LET IDENTIFIER ASSIGN expression {
         auto node = std::make_shared<ASTNode>(NodeType::Declaration, std::string($2));
-        node->children.push_back(*static_cast<ASTNodePtr*>($4));
+        auto expr = *static_cast<ASTNodePtr*>($4);
+        node->children.push_back(expr);
+        node->valueType = expr->valueType;  // Inherit type from the expression
+        
+        // Add to symbol table with proper type
+        symbolTable.declare(std::string($2), expr->valueType, SymbolType::Variable);
+        
         delete static_cast<ASTNodePtr*>($4);
         $$ = new ASTNodePtr(node);
     }
@@ -238,7 +248,15 @@ expression:
      free($1);  // since strdup() was used in lexer
     }
     | BOOLEAN_LITERAL  { $$ = new ASTNodePtr(std::make_shared<ASTNode>(NodeType::BoolLiteral, $1)); }
-    | IDENTIFIER       { $$ = new ASTNodePtr(std::make_shared<ASTNode>(NodeType::Identifier, std::string($1))); }
+    | IDENTIFIER {
+        auto ident = std::make_shared<ASTNode>(NodeType::Identifier, std::string($1));
+        // Try to get the type from symbol table, default to Int if not found
+        auto symbol = symbolTable.lookup(std::string($1));
+        if (symbol) {
+            ident->valueType = symbol->type;
+        }
+        $$ = new ASTNodePtr(ident);
+    }
     | expression PLUS expression {
         auto left = *static_cast<ASTNodePtr*>($1);
         auto right = *static_cast<ASTNodePtr*>($3);

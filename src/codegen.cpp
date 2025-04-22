@@ -46,7 +46,13 @@ void CodeGenerator::generateStatement(const std::shared_ptr<ASTNode> &node, std:
     switch (node->type)
     {
     case NodeType::Declaration:
-        out << "int " << node->strVal << " = ";
+        // Check if the child is a float literal
+        if (node->children[0]->type == NodeType::FloatLiteral) {
+            out << "float ";
+        } else {
+            out << "int ";
+        }
+        out << node->strVal << " = ";
         generateExpression(node->children[0], out);
         out << ";\n";
         break;
@@ -130,24 +136,26 @@ void CodeGenerator::generateStatement(const std::shared_ptr<ASTNode> &node, std:
                       << nodeTypeToString(node->children[0]->type) << "\n";
             std::cerr << "print() raw child strVal: " << node->children[0]->strVal << "\n";
             const auto &arg = node->children[0];
+            
+            // Determine format specifier based on the argument type
             switch (arg->type)
             {
             case NodeType::StringLiteral:
                 out << "printf(\"%s\", ";
                 break;
             case NodeType::FloatLiteral:
-                out << "printf(\"%f\", ";
+            case NodeType::Identifier:
+                if (arg->valueType == VarType::Float) {
+                    out << "printf(\"%f\", ";
+                } else {
+                    out << "printf(\"%d\", ";
+                }
                 break;
             case NodeType::BoolLiteral:
                 out << "printf(\"%s\", ";
                 break;
-            case NodeType::IntLiteral:
-            case NodeType::Identifier:
-            case NodeType::BinaryOp:
-                out << "printf(\"%d\", ";
-                break;
             default:
-                out << "printf(\"<unsupported>\", ";
+                out << "printf(\"%d\", ";
                 break;
             }
             generateExpression(arg, out);
