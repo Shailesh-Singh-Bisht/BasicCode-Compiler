@@ -1,0 +1,13 @@
+func sum(let a,let b){
+  let d=a+b;
+  return d;
+}
+
+
+func main(){
+  let a=10;
+  let b=4.3;
+  let c=sum(a,b);
+  print("\n The sum is:");
+  print(c);
+}
