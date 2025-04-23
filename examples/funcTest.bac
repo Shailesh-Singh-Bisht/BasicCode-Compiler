@@ -4,8 +4,8 @@ func sum(let a,let b){
 }
 
 func sum2(let a,let b){
-  let e=a+b;
-  return e;
+  let f=a+b;
+  return f;
 }
 
 
