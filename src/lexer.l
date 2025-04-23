@@ -59,20 +59,22 @@ STRING      \"([^\\\"]|\\.)*\"
 ";"         { return SEMICOLON; }
 
 {STRING} {
-    printf("[LEX DEBUG] Raw STRING matched: %s\n", yytext);
-    std::string raw(yytext);
-    raw = raw.substr(1, raw.length() - 2); // remove the quotes
-    yylval.str = strdup(raw.c_str());
+    yylval.str = strdup(yytext);
     return STRING_LITERAL;
 }
 
+{DIGIT}+"."{DIGIT}+  { 
+    yylval.floatVal = atof(yytext); 
+    return FLOAT_LITERAL; 
+}
 
-{DIGIT}+"."{DIGIT}+      { yylval.floatVal = atof(yytext); return FLOAT_LITERAL; }
-
-{DIGIT}+            { yylval.intVal = atoi(yytext); return INT_LITERAL; }
+{DIGIT}+    { 
+    yylval.intVal = atoi(yytext); 
+    return INT_LITERAL; 
+}
 
 {ID_START}{ID_CHAR}* {
-     if (strcmp(yytext, "let") == 0) return LET;
+    if (strcmp(yytext, "let") == 0) return LET;
     if (strcmp(yytext, "func") == 0) return FUNC;
     if (strcmp(yytext, "if") == 0) return IF;
     if (strcmp(yytext, "else") == 0) return ELSE;
@@ -81,19 +83,17 @@ STRING      \"([^\\\"]|\\.)*\"
     if (strcmp(yytext, "return") == 0) return RETURN;
     if (strcmp(yytext, "print") == 0) return PRINT;
     
-    printf("IDENTIFIER FOUND: %s\n", yytext);
     yylval.str = strdup(yytext);
     return IDENTIFIER;
 }
 
-\/\/[^\n]*      { /* skip single-line comments */ }
-
+\/\/[^\n]*  { /* skip single-line comments */ }
 "/*"([^*]|\*+[^*/])*\*+"/"  { /* multi-line comment */ }
 
-[\n]           { ++yylineno; }
-[ \t\r]+       { /* skip whitespace */ }
+[\n]        { ++yylineno; }
+[ \t\r]+    { /* skip whitespace */ }
 
-. {
+.           { 
     reportError(ErrorType::SyntaxError, std::string("Unknown character: ") + yytext, yylineno);
     return INVALID;
 }

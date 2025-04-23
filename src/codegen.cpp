@@ -1,19 +1,23 @@
 #include "codegen.h"
 #include <fstream>
 #include <iostream>
+#include <vector>
+#include <string>
 
 CodeGenerator::CodeGenerator() {}
 
 void CodeGenerator::generate(const std::shared_ptr<ASTNode> &root, const std::string &outputFile)
 {
     std::ofstream out(outputFile);
-    if (!out.is_open())
-    {
+    if (!out.is_open()) {
         std::cerr << "Failed to open output file: " << outputFile << '\n';
         return;
     }
 
+    // Write includes only
     out << "#include <stdio.h>\n\n";
+    
+    // Generate the actual code
     generateNode(root, out);
     out.close();
 }
@@ -42,6 +46,9 @@ void CodeGenerator::generateStatement(const std::shared_ptr<ASTNode> &node, std:
         return;
 
     std::cerr << "Generating Statement for: " << nodeTypeToString(node->type) << " = " << node->strVal << "\n";
+
+    // Move variable declarations before switch
+    bool firstParam = true;
 
     switch (node->type)
     {
@@ -114,11 +121,63 @@ void CodeGenerator::generateStatement(const std::shared_ptr<ASTNode> &node, std:
         break;
 
     case NodeType::Function:
-        out << "int " << node->strVal << "() ";
-        for (const auto &child : node->children)
-        {
-            if (child->type == NodeType::Block)
-                generateStatement(child, out);
+        {   // Add block scope to contain local variables
+            // Generate return type
+            switch (node->valueType) {
+                case VarType::Float:
+                    out << "float ";
+                    break;
+                case VarType::Int:
+                    out << "int ";
+                    break;
+                case VarType::Bool:
+                    out << "int ";  // Using int for bool in C
+                    break;
+                case VarType::String:
+                    out << "const char* ";
+                    break;
+                default:
+                    out << "void ";
+                    break;
+            }
+            
+            out << node->strVal << "(";
+            
+            // Generate parameters
+            firstParam = true;  // Reset firstParam here
+            for (const auto &child : node->children) {
+                if (child->type == NodeType::Argument) {
+                    if (!firstParam) out << ", ";
+                    firstParam = false;
+                    
+                    // Parameter type
+                    switch (child->valueType) {
+                        case VarType::Float:
+                            out << "float ";
+                            break;
+                        case VarType::Int:
+                            out << "int ";
+                            break;
+                        case VarType::Bool:
+                            out << "int ";
+                            break;
+                        case VarType::String:
+                            out << "const char* ";
+                            break;
+                        default:
+                            out << "int ";  // Default to int
+                            break;
+                    }
+                    out << child->strVal;
+                }
+            }
+            out << ") ";
+            
+            // Function body
+            for (const auto &child : node->children) {
+                if (child->type == NodeType::Block)
+                    generateStatement(child, out);
+            }
         }
         break;
 
@@ -163,8 +222,14 @@ void CodeGenerator::generateStatement(const std::shared_ptr<ASTNode> &node, std:
         }
         else
         {
-            generateExpression(node, out);
-            out << ";\n";
+            out << node->strVal << "(";
+            for (size_t i = 0; i < node->children.size(); ++i)
+            {
+                generateExpression(node->children[i], out);
+                if (i + 1 < node->children.size())
+                    out << ", ";
+            }
+            out << ")";
         }
         break;
 

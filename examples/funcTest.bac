@@ -3,6 +3,11 @@ func sum(let a,let b){
   return d;
 }
 
+func sum2(let a,let b){
+  let e=a+b;
+  return e;
+}
+
 
 func main(){
   let a=10;

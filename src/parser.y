@@ -54,7 +54,7 @@ SymbolTable symbolTable;  // Global symbol table instance
 %right NOT
 
 %type <ptr> program statement expression block declaration assignment function call return_stmt if_stmt while_stmt for_stmt
-%type <ptr> statements args opt_args
+%type <ptr> statements args opt_args call_args opt_call_args
 
 %start program
 %%
@@ -164,14 +164,14 @@ opt_args:
 ;
 
 args:
-    IDENTIFIER {
+    LET IDENTIFIER {
         auto list = new ASTNodeList();
-        list->push_back(std::make_shared<ASTNode>(NodeType::Argument, std::string($1)));
+        list->push_back(std::make_shared<ASTNode>(NodeType::Argument, std::string($2)));
         $$ = list;
     }
-    | args COMMA IDENTIFIER {
+    | args COMMA LET IDENTIFIER {
         auto list = static_cast<ASTNodeList*>($1);
-        list->push_back(std::make_shared<ASTNode>(NodeType::Argument, std::string($3)));
+        list->push_back(std::make_shared<ASTNode>(NodeType::Argument, std::string($4)));
         $$ = list;
     }
 ;
@@ -277,19 +277,42 @@ expression:
     | call                         { $$ = $1; }  
 ;
 
+opt_call_args:
+    /* empty */ { $$ = new ASTNodeList(); }
+    | call_args { $$ = $1; }
+;
+
+call_args:
+    expression {
+        auto list = new ASTNodeList();
+        list->push_back(*static_cast<ASTNodePtr*>($1));
+        delete static_cast<ASTNodePtr*>($1);
+        $$ = list;
+    }
+    | call_args COMMA expression {
+        auto list = static_cast<ASTNodeList*>($1);
+        list->push_back(*static_cast<ASTNodePtr*>($3));
+        delete static_cast<ASTNodePtr*>($3);
+        $$ = list;
+    }
+;
+
 call:
-    IDENTIFIER LPAREN opt_args RPAREN {
+    IDENTIFIER LPAREN opt_call_args RPAREN {
         if (std::string($1) == "print") {
             reportError(ErrorType::SemanticError, "print() cannot be used as expression", yylineno);
-            $$ = new ASTNodePtr(nullptr); // handle gracefully
+            $$ = new ASTNodePtr(nullptr);
         } else {
             auto node = std::make_shared<ASTNode>(NodeType::FunctionCall, std::string($1));
             auto args = static_cast<ASTNodeList*>($3);
-            for (auto& arg : *args) node->children.push_back(arg);
+            for (auto& arg : *args) {
+                node->children.push_back(arg);
+            }
             delete args;
             $$ = new ASTNodePtr(node);
         }
     }
+;
 
 %%
 
