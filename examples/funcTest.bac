@@ -3,8 +3,8 @@ func sum(let a,let b){
   return d;
 }
 
-func sum2(let a,let b){
-  let f=a+b;
+func diff(let a,let b){
+  let f=a-b;
   return f;
 }
 
@@ -13,6 +13,9 @@ func main(){
   let a=10;
   let b=4.3;
   let c=sum(a,b);
-  print("\n The sum is:");
+  let ans=diff(10,12);
+  print("\n The sum from sum1 is: \n");
   print(c);
+  print("\n The sum from sum2 is: \n ");
+  print(ans);
 }
