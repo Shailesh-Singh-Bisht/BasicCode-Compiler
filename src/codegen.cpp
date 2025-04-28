@@ -4,56 +4,42 @@
 #include <vector>
 #include <string>
 
+using namespace std;
+
 CodeGenerator::CodeGenerator() {}
 
-void CodeGenerator::generate(const std::shared_ptr<ASTNode> &root, const std::string &outputFile)
-{
-    std::ofstream out(outputFile);
+void CodeGenerator::generate(const shared_ptr<ASTNode> &root, const string &outputFile) {
+    ofstream out(outputFile);
     if (!out.is_open()) {
-        std::cerr << "Failed to open output file: " << outputFile << '\n';
+        cerr << "Failed to open output file: " << outputFile << '\n';
         return;
     }
 
-    // Write includes only
     out << "#include <stdio.h>\n\n";
-    
-    // Generate the actual code
     generateNode(root, out);
     out.close();
 }
 
-void CodeGenerator::generateNode(const std::shared_ptr<ASTNode> &node, std::ostream &out)
-{
-    if (!node)
-        return;
+void CodeGenerator::generateNode(const shared_ptr<ASTNode> &node, ostream &out) {
+    if (!node) return;
 
-    if (node->type == NodeType::Program || node->type == NodeType::Block)
-    {
-        for (const auto &child : node->children)
-        {
+    if (node->type == NodeType::Program || node->type == NodeType::Block) {
+        for (const auto &child : node->children) {
             generateStatement(child, out);
         }
-    }
-    else
-    {
+    } else {
         generateStatement(node, out);
     }
 }
 
-void CodeGenerator::generateStatement(const std::shared_ptr<ASTNode> &node, std::ostream &out)
-{
-    if (!node)
-        return;
+void CodeGenerator::generateStatement(const shared_ptr<ASTNode> &node, ostream &out) {
+    if (!node) return;
 
-    std::cerr << "Generating Statement for: " << nodeTypeToString(node->type) << " = " << node->strVal << "\n";
-
-    // Move variable declarations before switch
+    cerr << "Generating Statement for: " << nodeTypeToString(node->type) << " = " << node->strVal << "\n";
     bool firstParam = true;
 
-    switch (node->type)
-    {
+    switch (node->type) {
     case NodeType::Declaration:
-        // Check if the child is a float literal
         if (node->children[0]->type == NodeType::FloatLiteral) {
             out << "float ";
         } else {
@@ -72,8 +58,9 @@ void CodeGenerator::generateStatement(const std::shared_ptr<ASTNode> &node, std:
 
     case NodeType::Return:
         out << "return ";
-        if (!node->children.empty())
+        if (!node->children.empty()) {
             generateExpression(node->children[0], out);
+        }
         out << ";\n";
         break;
 
@@ -95,91 +82,82 @@ void CodeGenerator::generateStatement(const std::shared_ptr<ASTNode> &node, std:
 
     case NodeType::While:
         out << "while (";
-        generateExpression(node->children[0], out); // condition
+        generateExpression(node->children[0], out);
         out << ") ";
-        generateStatement(node->children[1], out); // body
+        generateStatement(node->children[1], out);
         break;
 
     case NodeType::For:
         out << "for (";
-        if (node->children[0]->type == NodeType::Declaration)
-        {
+        if (node->children[0]->type == NodeType::Declaration) {
             out << "int " << node->children[0]->strVal << " = ";
             generateExpression(node->children[0]->children[0], out);
-        }
-        else
-        {
+        } else {
             out << node->children[0]->strVal << " = ";
             generateExpression(node->children[0]->children[0], out);
         }
         out << "; ";
-        generateExpression(node->children[1], out); // condition
+        generateExpression(node->children[1], out);
         out << "; ";
-        generateExpression(node->children[2], out); // update
+        generateExpression(node->children[2], out);
         out << ") ";
-        generateStatement(node->children[3], out); // body
+        generateStatement(node->children[3], out);
         break;
 
-    case NodeType::Function:
-        {   // Add block scope to contain local variables
-            // Generate return type
-            switch (node->valueType) {
-                case VarType::Float:
-                    out << "float ";
-                    break;
-                case VarType::Int:
-                    out << "int ";
-                    break;
-                case VarType::Bool:
-                    out << "int ";  // Using int for bool in C
-                    break;
-                case VarType::String:
-                    out << "const char* ";
-                    break;
-                default:
-                    out << "void ";
-                    break;
-            }
-            
-            out << node->strVal << "(";
-            
-            // Generate parameters
-            firstParam = true;  // Reset firstParam here
-            for (const auto &child : node->children) {
-                if (child->type == NodeType::Argument) {
-                    if (!firstParam) out << ", ";
-                    firstParam = false;
-                    
-                    // Parameter type
-                    switch (child->valueType) {
-                        case VarType::Float:
-                            out << "float ";
-                            break;
-                        case VarType::Int:
-                            out << "int ";
-                            break;
-                        case VarType::Bool:
-                            out << "int ";
-                            break;
-                        case VarType::String:
-                            out << "const char* ";
-                            break;
-                        default:
-                            out << "int ";  // Default to int
-                            break;
-                    }
-                    out << child->strVal;
+    case NodeType::Function: {
+        switch (node->valueType) {
+            case VarType::Float:
+                out << "float ";
+                break;
+            case VarType::Int:
+                out << "int ";
+                break;
+            case VarType::Bool:
+                out << "int ";
+                break;
+            case VarType::String:
+                out << "const char* ";
+                break;
+            default:
+                out << "void ";
+                break;
+        }
+        
+        out << node->strVal << "(";
+        firstParam = true;
+        for (const auto &child : node->children) {
+            if (child->type == NodeType::Argument) {
+                if (!firstParam) out << ", ";
+                firstParam = false;
+                
+                switch (child->valueType) {
+                    case VarType::Float:
+                        out << "float ";
+                        break;
+                    case VarType::Int:
+                        out << "int ";
+                        break;
+                    case VarType::Bool:
+                        out << "int ";
+                        break;
+                    case VarType::String:
+                        out << "const char* ";
+                        break;
+                    default:
+                        out << "int ";
+                        break;
                 }
-            }
-            out << ") ";
-            
-            // Function body
-            for (const auto &child : node->children) {
-                if (child->type == NodeType::Block)
-                    generateStatement(child, out);
+                out << child->strVal;
             }
         }
+        out << ") ";
+        
+        for (const auto &child : node->children) {
+            if (child->type == NodeType::Block)
+                generateStatement(child, out);
+        }
         break;
+    }
 
     case NodeType::Block:
         out << "{\n";
@@ -189,16 +167,13 @@ void CodeGenerator::generateStatement(const std::shared_ptr<ASTNode> &node, std:
         break;
 
     case NodeType::FunctionCall:
-        if (node->strVal == "print")
-        {
-            std::cerr << "[CODEGEN DEBUG] Generating print() with arg type: "
+        if (node->strVal == "print") {
+            cerr << "[CODEGEN DEBUG] Generating print() with arg type: "
                       << nodeTypeToString(node->children[0]->type) << "\n";
-            std::cerr << "print() raw child strVal: " << node->children[0]->strVal << "\n";
+            cerr << "print() raw child strVal: " << node->children[0]->strVal << "\n";
             const auto &arg = node->children[0];
             
-            // Determine format specifier based on the argument type
-            switch (arg->type)
-            {
+            switch (arg->type) {
             case NodeType::StringLiteral:
                 out << "printf(\"%s\", ";
                 break;
@@ -219,12 +194,9 @@ void CodeGenerator::generateStatement(const std::shared_ptr<ASTNode> &node, std:
             }
             generateExpression(arg, out);
             out << ");\n";
-        }
-        else
-        {
+        } else {
             out << node->strVal << "(";
-            for (size_t i = 0; i < node->children.size(); ++i)
-            {
+            for (size_t i = 0; i < node->children.size(); ++i) {
                 generateExpression(node->children[i], out);
                 if (i + 1 < node->children.size())
                     out << ", ";
@@ -234,18 +206,15 @@ void CodeGenerator::generateStatement(const std::shared_ptr<ASTNode> &node, std:
         break;
 
     default:
-        out << "/* Unhandled statement */\n";
+        out << "\n";
         break;
     }
 }
 
-void CodeGenerator::generateExpression(const std::shared_ptr<ASTNode> &node, std::ostream &out)
-{
-    if (!node)
-        return;
+void CodeGenerator::generateExpression(const shared_ptr<ASTNode> &node, ostream &out) {
+    if (!node) return;
 
-    switch (node->type)
-    {
+    switch (node->type) {
     case NodeType::Assignment:
         out << node->strVal << " = ";
         generateExpression(node->children[0], out);
@@ -285,15 +254,11 @@ void CodeGenerator::generateExpression(const std::shared_ptr<ASTNode> &node, std
         break;
 
     case NodeType::FunctionCall:
-        if (node->strVal == "print")
-        {
+        if (node->strVal == "print") {
             out << "/* print() used as expression — invalid */";
-        }
-        else
-        {
+        } else {
             out << node->strVal << "(";
-            for (size_t i = 0; i < node->children.size(); ++i)
-            {
+            for (size_t i = 0; i < node->children.size(); ++i) {
                 generateExpression(node->children[i], out);
                 if (i + 1 < node->children.size())
                     out << ", ";
