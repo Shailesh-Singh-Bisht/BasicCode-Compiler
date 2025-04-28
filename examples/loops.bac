@@ -3,6 +3,7 @@ func main() {
      print("\n");
     while (x < 3) {
         print(x);
+        print("\n");
         x = x + 1;
     }
 
