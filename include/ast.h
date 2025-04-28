@@ -6,6 +6,8 @@
 #include <vector>
 #include <memory>
 
+using namespace std;
+
 enum class NodeType {
     Program,
     Block,
@@ -37,7 +39,7 @@ enum class VarType {
 };
 
 // Convert NodeType to string (for debugging/printing)
-std::string nodeTypeToString(NodeType type);
+string nodeTypeToString(NodeType type);
 
 class ASTNode {
 public:
@@ -47,24 +49,24 @@ public:
     int intVal = 0;
     float floatVal = 0.0f;
     bool boolVal = false;
-    std::string strVal;
+    string strVal;
 
-    std::shared_ptr<ASTNode> left = nullptr;
-    std::shared_ptr<ASTNode> right = nullptr;
-    std::vector<std::shared_ptr<ASTNode>> children;
+    shared_ptr<ASTNode> left = nullptr;
+    shared_ptr<ASTNode> right = nullptr;
+    vector<shared_ptr<ASTNode>> children;
 
     // Constructors
     explicit ASTNode(NodeType type);
     ASTNode(NodeType type, int value);
     ASTNode(NodeType type, float value);
     ASTNode(NodeType type, bool value);
-    ASTNode(NodeType type, const std::string& value);
-    ASTNode(NodeType type, const std::string& op, std::shared_ptr<ASTNode> lhs, std::shared_ptr<ASTNode> rhs);
-    ASTNode(NodeType type, const std::vector<std::shared_ptr<ASTNode>>& children);
+    ASTNode(NodeType type, const string& value);
+    ASTNode(NodeType type, const string& op, shared_ptr<ASTNode> lhs, shared_ptr<ASTNode> rhs);
+    ASTNode(NodeType type, const vector<shared_ptr<ASTNode>>& children);
 
     // Utilities
     void print(int indent = 0) const;
-    std::string getLiteralAsString() const;
+    string getLiteralAsString() const;
 };
 
 #endif // AST_H

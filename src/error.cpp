@@ -1,31 +1,31 @@
 #include "../include/error.h"
 #include <iostream>
 #include <cstdlib>
+using namespace std;
 
 static int errorCount = 0;
 
-void reportError(ErrorType type, const std::string& message, int line) {
-    std::cerr << "[Error";
+void reportError(ErrorType type, const string& message, int line) {
+    cerr << "[Error";
 
     switch (type) {
-        case ErrorType::SyntaxError:   std::cerr << " - Syntax";   break;
-        case ErrorType::SemanticError: std::cerr << " - Semantic"; break;
-        case ErrorType::RuntimeError:  std::cerr << " - Runtime";  break;
+        case ErrorType::SyntaxError:   cerr << " - Syntax";   break;
+        case ErrorType::SemanticError: cerr << " - Semantic"; break;
+        case ErrorType::RuntimeError:  cerr << " - Runtime";  break;
     }
 
     if (line >= 0)
-        std::cerr << "] Line " << line << ": ";
+        cerr << "] Line " << line << ": ";
     else
-        std::cerr << "]: ";
+        cerr << "]: ";
 
-    std::cerr << message << std::endl;
+    cerr << message << endl;
 
     ++errorCount;
-
-    // Limit to prevent endless error spam
+    
     if (errorCount >= 10) {
-        std::cerr << "[Error] Too many errors. Compilation aborted." << std::endl;
-        std::exit(EXIT_FAILURE);
+        cerr << "[Error] Too many errors. Compilation aborted." << endl;
+        exit(EXIT_FAILURE);
     }
 }
 

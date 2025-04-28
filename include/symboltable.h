@@ -7,6 +7,8 @@
 #include <memory>
 #include "ast.h"  // For VarType
 
+using namespace std;
+
 // Types of entries that can be stored in the symbol table
 enum class SymbolType {
     Variable,
@@ -15,12 +17,12 @@ enum class SymbolType {
 
 // Information for each declared symbol
 struct SymbolInfo {
-    std::string name;
+    string name;
     VarType type;
     SymbolType symbolType;
     int scopeLevel;
 
-    SymbolInfo(const std::string& name, VarType type, SymbolType symbolType, int scopeLevel);
+    SymbolInfo(const string& name, VarType type, SymbolType symbolType, int scopeLevel);
 };
 
 // SymbolTable with nested scopes
@@ -35,14 +37,14 @@ public:
     void exitScope();
 
     // Declare a new symbol in the current scope
-    bool declare(const std::string& name, VarType type, SymbolType symbolType);
+    bool declare(const string& name, VarType type, SymbolType symbolType);
 
     // Look up a symbol by name, searching from innermost to outermost scope
-    std::shared_ptr<SymbolInfo> lookup(const std::string& name);
+    shared_ptr<SymbolInfo> lookup(const string& name);
 
 private:
     int currentScope = 0;
-    std::vector<std::unordered_map<std::string, std::shared_ptr<SymbolInfo>>> scopes;
+    vector<unordered_map<string, shared_ptr<SymbolInfo>>> scopes;
 };
 
 #endif // SYMBOLTABLE_H

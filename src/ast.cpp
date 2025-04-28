@@ -1,6 +1,8 @@
 #include "ast.h"
 #include <iostream>
 
+using namespace std;
+
 ASTNode::ASTNode(NodeType type) : type(type) {}
 
 ASTNode::ASTNode(NodeType type, int value)
@@ -12,26 +14,25 @@ ASTNode::ASTNode(NodeType type, float value)
 ASTNode::ASTNode(NodeType type, bool value)
     : type(type), boolVal(value), valueType(VarType::Bool) {}
 
-ASTNode::ASTNode(NodeType type, const std::string &value)
+ASTNode::ASTNode(NodeType type, const string &value)
     : type(type), strVal(value)
 {
-    // For declaration nodes, inherit the value type from the initializer if it exists
-    if (type == NodeType::Declaration && !children.empty()) {
+    if (type == NodeType::Declaration && !children.empty())
+    {
         valueType = children[0]->valueType;
     }
-    std::cerr << "[AST DEBUG] String constructor: " << value << "\n";
-    std::cerr << "[AST DEBUG] StringLiteral value stored: " << value << "\n";
-
+    cerr << "[AST DEBUG] String constructor: " << value << "\n";
+    cerr << "[AST DEBUG] StringLiteral value stored: " << value << "\n";
 }
 
-ASTNode::ASTNode(NodeType type, const std::string &op,
-                 std::shared_ptr<ASTNode> lhs, std::shared_ptr<ASTNode> rhs)
-    : type(type), strVal(op), left(std::move(lhs)), right(std::move(rhs)) {}
+ASTNode::ASTNode(NodeType type, const string &op,
+                 shared_ptr<ASTNode> lhs, shared_ptr<ASTNode> rhs)
+    : type(type), strVal(op), left(move(lhs)), right(move(rhs)) {}
 
-ASTNode::ASTNode(NodeType type, const std::vector<std::shared_ptr<ASTNode>> &children)
+ASTNode::ASTNode(NodeType type, const vector<shared_ptr<ASTNode>> &children)
     : type(type), children(children) {}
 
-std::string nodeTypeToString(NodeType type)
+string nodeTypeToString(NodeType type)
 {
     switch (type)
     {
@@ -81,11 +82,11 @@ std::string nodeTypeToString(NodeType type)
 void ASTNode::print(int indent) const
 {
     if (type == NodeType::FunctionCall)
-        std::cout << " = " << strVal;
+        cout << " = " << strVal;
 
     for (int i = 0; i < indent; ++i)
-        std::cout << "  ";
-    std::cout << nodeTypeToString(type);
+        cout << "  ";
+    cout << nodeTypeToString(type);
 
     switch (type)
     {
@@ -99,26 +100,26 @@ void ASTNode::print(int indent) const
     case NodeType::Assignment:
     case NodeType::Function:
         if (!strVal.empty())
-            std::cout << " = " << strVal;
+            cout << " = " << strVal;
         break;
 
     case NodeType::IntLiteral:
-        std::cout << " = " << intVal;
+        cout << " = " << intVal;
         break;
 
     case NodeType::FloatLiteral:
-        std::cout << " = " << floatVal;
+        cout << " = " << floatVal;
         break;
 
     case NodeType::BoolLiteral:
-        std::cout << " = " << (boolVal ? "true" : "false");
+        cout << " = " << (boolVal ? "true" : "false");
         break;
 
     default:
         break;
     }
 
-    std::cout << '\n';
+    cout << '\n';
 
     if (left)
         left->print(indent + 1);

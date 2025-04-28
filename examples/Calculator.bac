@@ -1,0 +1,40 @@
+func sum(let a,let b){
+  return a+b;
+}
+
+func diff(let a,let b){
+  return a-b;
+}
+
+func multiply(let a,let b){
+  return a*b;
+}
+
+func div(let a,let b){
+  return a/b;
+}
+
+
+func main(){
+  let num1=10;
+  let num2=2.5;
+  let ans=0;
+
+  print("\nWelcome to Calculator\n");
+
+  ans=sum(num1,num2);
+  print("\nThe sum is:");
+  print(ans);
+
+  ans=diff(num1,num2);
+  print("\nThe diff is:");
+  print(ans);
+
+  ans=multiply(num1,num2);
+  print("\nThe product is:");
+  print(ans);
+
+  ans=div(num1,num2);
+  print("\nThe division is:");
+  print(ans);
+}
