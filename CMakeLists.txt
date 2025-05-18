@@ -8,6 +8,10 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_C_COMPILER "C:/msys64/mingw64/bin/gcc.exe")
 set(CMAKE_CXX_COMPILER "C:/msys64/mingw64/bin/g++.exe")
 
+# Manually set WinFlexBison paths
+set(FLEX_EXECUTABLE "C:/WinFlexBison/win_flex.exe")
+set(BISON_EXECUTABLE "C:/WinFlexBison/win_bison.exe")
+
 # Find Flex and Bison
 find_package(FLEX REQUIRED)
 find_package(BISON REQUIRED)
@@ -31,8 +35,8 @@ set(SOURCES
     src/main.cpp
     src/ast.cpp
     src/codegen.cpp
-    src/error.cpp          # ✅ Added
-    src/symboltable.cpp    # ✅ Added
+    src/error.cpp
+    src/symboltable.cpp
     ${FLEX_Lexer_OUTPUTS}
     ${BISON_Parser_OUTPUTS}
 )
