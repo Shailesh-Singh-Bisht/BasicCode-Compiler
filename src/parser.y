@@ -101,8 +101,6 @@ statement:
     $$ = new ASTNodePtr(node);
     delete static_cast<ASTNodePtr*>($3);
 }
-
-
 ;
 
 
