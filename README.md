@@ -1,6 +1,6 @@
 # BasicCode Compiler
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-2-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-3-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 A simple and efficient compiler for the BasicCode (.bac) programming language, built using Flex, Bison, GCC, and CMake. This project compiles `.bac` source files into executable machine code.
@@ -222,6 +222,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://shailesh-singh-bisht-portfolio.vercel.app/"><img src="https://avatars.githubusercontent.com/u/107263955?v=4?s=100" width="100px;" alt="Shailesh Singh Bisht"/><br /><sub><b>Shailesh Singh Bisht</b></sub></a><br /><a href="#projectManagement-Shailesh-Singh-Bisht" title="Project Management">📆</a> <a href="#maintenance-Shailesh-Singh-Bisht" title="Maintenance">🚧</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/royalhub123"><img src="https://avatars.githubusercontent.com/u/168981505?v=4?s=100" width="100px;" alt="royalhub123"/><br /><sub><b>royalhub123</b></sub></a><br /><a href="https://github.com/Shailesh-Singh-Bisht/BasicCode-Compiler/commits?author=royalhub123" title="Code">💻</a> <a href="#tool-royalhub123" title="Tools">🔧</a> <a href="https://github.com/Shailesh-Singh-Bisht/BasicCode-Compiler/issues?q=author%3Aroyalhub123" title="Bug reports">🐛</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/Akhilnautiyal5"><img src="https://avatars.githubusercontent.com/u/113812781?v=4?s=100" width="100px;" alt="Akhil Nautiyal"/><br /><sub><b>Akhil Nautiyal</b></sub></a><br /><a href="https://github.com/Shailesh-Singh-Bisht/BasicCode-Compiler/commits?author=Akhilnautiyal5" title="Code">💻</a> <a href="https://github.com/Shailesh-Singh-Bisht/BasicCode-Compiler/commits?author=Akhilnautiyal5" title="Tests">⚠️</a> <a href="https://github.com/Shailesh-Singh-Bisht/BasicCode-Compiler/issues?q=author%3AAkhilnautiyal5" title="Bug reports">🐛</a></td>
     </tr>
   </tbody>
   <tfoot>
