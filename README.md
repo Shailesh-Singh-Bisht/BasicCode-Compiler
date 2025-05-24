@@ -3,7 +3,7 @@
 [![All Contributors](https://img.shields.io/badge/all_contributors-4-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
-A simple and efficient compiler for the BasicCode (.bac) programming language, built using Flex, Bison, GCC, and CMake. This project compiles `.bac` source files into executable machine code.
+A simple and efficient compiler for the BasicCode (.bac) programming language, built using Flex, Bison, GCC, and CMake. This project compiles `.bac` source files into executable machine code for Windows.
 
 ## 🚀 Features
 
@@ -16,96 +16,135 @@ A simple and efficient compiler for the BasicCode (.bac) programming language, b
 ✅ **Symbol Table**: Efficient symbol table management for identifier resolution  
 ✅ **Error Handling**: Comprehensive error reporting with line numbers and context  
 ✅ **Custom IR**: Custom Intermediate Representation instead of LLVM for lighter footprint  
-✅ **Cross-Platform**: Builds on Windows, Linux, and macOS  
+✅ **Windows Compatible**: Built specifically for Windows systems  
 
-## 🛠️ Setting Up the Project
+## 🏃‍♂️ Quick Start - Using Pre-built Binaries
+
+> **Want to try BasicCode immediately?** Skip the build process and use our pre-compiled binaries!
+
+### 📥 Download & Setup
+
+1. **Download the Release Package**
+   - Go to our [Releases page](https://github.com/yourusername/BasicCode-Compiler/releases)
+   - Download the latest `BasicCode-Compiler-v{version}.zip` for Windows
+
+2. **Extract & Install**
+   ```cmd
+   # Extract to your desired location (e.g., C:\BasicCode-Compiler)
+   ```
+
+### 🔧 Configure System PATH
+
+**Option 1: GUI Method**
+1. **Open Environment Variables**
+   - Press `Win + R`, type `sysdm.cpl`, press Enter
+   - Click "Environment Variables..." button
+
+2. **Edit PATH Variable**
+   - Under "System variables", find and select `Path`
+   - Click "Edit..." → "New"
+   - Add: `C:\BasicCode-Compiler\bin` (or your extraction path)
+   - Click "OK" to save all changes
+
+**Option 2: Command Line Method**
+```cmd
+# Run as Administrator
+setx PATH "%PATH%;C:\BasicCode-Compiler\bin" /M
+```
+
+### ✅ Verify Installation
+
+Open a **new** command prompt and test:
+
+```cmd
+# Check if compiler is accessible
+mycompiler
+
+# Test with a sample file
+mycompiler path\to\your\file.bac
+```
+
+### 🎯 Usage Examples
+
+```cmd
+# Compile a BasicCode file
+mycompiler hello.bac
+
+# Compile with output specification
+mycompiler input.bac -o myprogram.exe
+```
+
+---
+
+## 🛠️ Building From Source
 
 ### 1️⃣ Install Dependencies
 
-Make sure you have the following installed:
-
-- **CMake** (version 3.10 or higher) → [Download](https://cmake.org/download/)
-- **MSYS2** (for MinGW GCC on Windows) → [Download](https://www.msys2.org/)
-- **Flex & Bison** → Install `WinFlexBison` from [here](https://sourceforge.net/projects/winflexbison/)
-
-### 2️⃣ Install MinGW GCC on MSYS2
-
-After installing MSYS2, open the MSYS2 MinGW64 terminal and run:
-
-```sh
+**Windows (MSYS2):**
+```bash
+# Install MSYS2 from https://www.msys2.org/
+# Then run in MSYS2 MinGW64 terminal:
 pacman -S mingw-w64-x86_64-gcc mingw-w64-x86_64-make mingw-w64-x86_64-cmake
+
+# Install WinFlexBison from https://sourceforge.net/projects/winflexbison/
 ```
 
-### 3️⃣ Install Flex & Bison (WinFlexBison)
+### 2️⃣ Clone & Build
 
-- Download `WinFlexBison` from [SourceForge](https://sourceforge.net/projects/winflexbison/)
-- Extract the folder and add it to your System PATH
-- Verify installation:
-
-```sh
-win_flex --version
-win_bison --version
-```
-
-## 🏗️ Building the Compiler
-
-### 1️⃣ Clone the Repository
-
-```sh
+```bash
 git clone https://github.com/yourusername/BasicCode-Compiler.git
 cd BasicCode-Compiler
-```
 
-### 2️⃣ Configure & Build with CMake
+# Create build directory
+mkdir build && cd build
 
-```sh
-mkdir build
-cd build
+# Configure and build
 cmake .. -G "MinGW Makefiles"
 cmake --build .
 ```
 
-### 3️⃣ Run the Compiler
+### 3️⃣ Test Your Build
 
-```sh
-./mycompiler ../examples/test.bac
+```bash
+# Test the compiled binary
+./mycompiler.exe ../examples/test.bac
+./a.exe  # Run the generated executable
 ```
 
 ## 📂 Project Structure
 
 ```
 BasicCode-Compiler/
-├── include/                # Header files (.h)
-│   ├── lexer.h            # Lexer definitions and token types
-│   ├── parser.h           # Parser & AST structure definitions
-│   ├── ast.h              # AST node types and transformations
-│   ├── codegen.h          # Code generation logic
-│   ├── symboltable.h      # Symbol table management
-│   └── error.h            # Error handling utilities
+├── 📁 include/                # Header files (.h)
+│   ├── lexer.h               # Lexer definitions and token types
+│   ├── parser.h              # Parser & AST structure definitions
+│   ├── ast.h                 # AST node types and transformations
+│   ├── codegen.h             # Code generation logic
+│   ├── symboltable.h         # Symbol table management
+│   └── error.h               # Error handling utilities
 │
-├── src/                   # Source files
-│   ├── lexer.l            # Flex lexer specification
-│   ├── parser.y           # Bison parser grammar
-│   ├── ast.cpp            # AST manipulation and optimization
-│   ├── codegen.cpp        # Code generation (GCC backend)
-│   ├── symboltable.cpp    # Symbol table implementation
-│   ├── error.cpp          # Error handling implementation
-│   └── main.cpp           # Compiler entry point
+├── 📁 src/                   # Source files
+│   ├── lexer.l               # Flex lexer specification
+│   ├── parser.y              # Bison parser grammar
+│   ├── ast.cpp               # AST manipulation and optimization
+│   ├── codegen.cpp           # Code generation (GCC backend)
+│   ├── symboltable.cpp       # Symbol table implementation
+│   ├── error.cpp             # Error handling implementation
+│   └── main.cpp              # Compiler entry point
 │
-├── examples/              # Example .bac programs
-│   ├── test.bac           # Basic arithmetic operations
-│   ├── functions.bac      # Function definition examples
-│   └── variables.bac      # Variable declaration examples
-│
-├── CMakeLists.txt         # Build configuration
-└── README.md              # Project documentation
+├── 📁 examples/              # Example .bac programs
+│   ├── test.bac              # Basic arithmetic operations
+│   ├── functions.bac         # Function definition examples
+│   └── variables.bac         # Variable declaration examples
+├── CMakeLists.txt            # Build configuration
+└── README.md                 # This file
 ```
 
 ## 📜 Writing BasicCode (`.bac`) Programs
 
-### Example Program
+### Basic Syntax Example
 
-Create a file named `test.bac`:
+Create a file named `hello.bac`:
 
 ```bac
 // Variable declarations
@@ -122,84 +161,104 @@ function multiply(a, b) {
 let product = multiply(x, y);
 print("Sum:", result);
 print("Product:", product);
+
+// Conditional statements
+if (result > 25) {
+    print("Result is greater than 25");
+} else {
+    print("Result is 25 or less");
+}
+
+// Loops
+for (let i = 1; i <= 5; i = i + 1) {
+    print("Iteration:", i);
+}
 ```
 
 ### Compile and Run
 
-```sh
-./mycompiler examples/test.bac
-./a.out
+```cmd
+mycompiler hello.bac
+a.exe
 ```
 
-**Expected output:**
-
+**Expected Output:**
 ```
 Sum: 30
 Product: 200
+Result is greater than 25
+Iteration: 1
+Iteration: 2
+Iteration: 3
+Iteration: 4
+Iteration: 5
 ```
 
 ## 🐛 Troubleshooting
 
 ### Common Issues and Solutions
 
-**1️⃣ `CMake Error: No project() command`**  
-👉 **Solution**: Ensure your `CMakeLists.txt` starts with:
-```cmake
-cmake_minimum_required(VERSION 3.10)
-project(BasicCode-Compiler)
-```
-
-**2️⃣ `CMake cannot find Flex/Bison`**  
-👉 **Solution**:
-- Verify `win_flex.exe` and `win_bison.exe` are in your PATH
-- Try reinstalling WinFlexBison and updating your PATH
-
-**3️⃣ `GCC Not Found`**  
-👉 **Solution**: Install GCC through MSYS2:
-```sh
-pacman -S mingw-w64-x86_64-gcc
-```
-
-**4️⃣ `Permission Denied` when running executable**  
-👉 **Solution**:
-- On Windows: Check antivirus software
-- On Linux/macOS: Ensure executable permissions with `chmod +x ./mycompiler`
+| Issue | Solution |
+|-------|----------|
+| **`mycompiler` command not found** | Verify PATH is correctly set and restart command prompt |
+| **`CMake Error: No project() command`** | Ensure `CMakeLists.txt` starts with proper project declaration |
+| **`CMake cannot find Flex/Bison`** | Install WinFlexBison and add to PATH |
+| **`GCC Not Found`** | Install GCC via MSYS2 |
+| **Access denied on executable** | Run command prompt as Administrator |
 
 ## 🤝 Contributing
 
 We welcome contributions! Here's how you can help:
 
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+### Quick Start for Contributors
+
+1. **Fork & Clone**
+   ```bash
+   git clone https://github.com/yourusername/BasicCode-Compiler.git
+   cd BasicCode-Compiler
+   ```
+
+2. **Create Feature Branch**
+   ```bash
+   git checkout -b feature/amazing-feature
+   ```
+
+3. **Make Changes & Test**
+   ```bash
+   # Build and test your changes
+   mkdir build && cd build
+   cmake .. && cmake --build .
+   ```
+
+4. **Submit Pull Request**
+   ```bash
+   git commit -m "Add amazing feature"
+   git push origin feature/amazing-feature
+   ```
 
 ### Development Guidelines
 
 - Follow existing code style and conventions
+- Add tests for new features
 - Update documentation as needed
+- Ensure Windows compatibility
 
 ## 📄 License
 
 This project is licensed under the **MIT License** - see the `LICENSE` file for details.
 
-## 🚀 Roadmap
+## 🗺️ Roadmap
 
-- [ ] Implement standard library functions
-- [ ] Add debugging information generation
-- [ ] Create IDE/editor plugins
-- [ ] Implement optimization passes
+- [ ] **IDE Integration**: Create plugins for VS Code, Vim, etc.
+- [ ] **Optimization**: Implement compiler optimization passes
+- [ ] **Package Manager**: Create a package management system
 
-## 📞 Support
+## 📞 Support & Community
 
-If you encounter any issues or have questions:
-
-- Open an issue on GitHub
-- Check the documentation in the `docs/` folder
-- Join our discussions in the GitHub Discussions tab
-
-**Happy Coding with BasicCode!** 🎯
+- 🐛 **Bug Reports**: [Open an Issue](https://github.com/yourusername/BasicCode-Compiler/issues)
+- 💬 **Discussions**: [GitHub Discussions](https://github.com/yourusername/BasicCode-Compiler/discussions)
+- 📖 **Documentation**: Check the `docs/` folder
+- 🆘 **Help**: Tag us in issues with `help wanted` label
 
 ## Contributors ✨
 
@@ -233,6 +292,10 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
-Want to contribute? We'd love to have you! Check out our Contributing Guidelines and submit a Pull Request! 🎉
+Want to contribute? We'd love to have you! Check out our [Contributing Guidelines](#-contributing) and submit a Pull Request! 🎉
 
 This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
+
+---
+
+**Happy Coding with BasicCode!** 🎯
