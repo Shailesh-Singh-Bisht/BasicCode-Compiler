@@ -41,6 +41,17 @@
         "test",
         "bug"
       ]
+    },
+    {
+      "login": "Vivek-Pokhriyal",
+      "name": "Vivek-Pokhriyal",
+      "avatar_url": "https://avatars.githubusercontent.com/u/202429019?v=4",
+      "profile": "https://github.com/Vivek-Pokhriyal",
+      "contributions": [
+        "code",
+        "review",
+        "test"
+      ]
     }
   ],
   "contributorsPerLine": 7,
