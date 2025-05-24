@@ -9,7 +9,7 @@ A simple and efficient compiler for the BasicCode (.bac) programming language, b
 
 ✅ **Lexical Analysis**: Tokenization using Flex for efficient source code scanning  
 ✅ **Syntax Parsing**: AST generation using Bison with comprehensive grammar support  
-✅ **Code Generation**: Native machine code generation using GCC backend  
+✅ **Code Generation**: C Code generation by traversing the AST.  
 ✅ **Expression Support**: Full support for arithmetic, logical, and comparison expressions  
 ✅ **Variable Management**: Declaration, assignment, and scope handling for variables  
 ✅ **Function Support**: Function definitions, calls, and parameter passing  
@@ -49,18 +49,6 @@ A simple and efficient compiler for the BasicCode (.bac) programming language, b
 ```cmd
 # Run as Administrator
 setx PATH "%PATH%;C:\BasicCode-Compiler\bin" /M
-```
-
-### ✅ Verify Installation
-
-Open a **new** command prompt and test:
-
-```cmd
-# Check if compiler is accessible
-mycompiler
-
-# Test with a sample file
-mycompiler path\to\your\file.bac
 ```
 
 ### 🎯 Usage Examples
@@ -107,7 +95,6 @@ cmake --build .
 ```bash
 # Test the compiled binary
 ./mycompiler.exe ../examples/test.bac
-./a.exe  # Run the generated executable
 ```
 
 ## 📂 Project Structure
@@ -178,7 +165,6 @@ for (let i = 1; i <= 5; i = i + 1) {
 
 ```cmd
 mycompiler hello.bac
-a.exe
 ```
 
 **Expected Output:**
