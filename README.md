@@ -15,7 +15,6 @@ A simple and efficient compiler for the BasicCode (.bac) programming language, b
 ✅ **Function Support**: Function definitions, calls, and parameter passing  
 ✅ **Symbol Table**: Efficient symbol table management for identifier resolution  
 ✅ **Error Handling**: Comprehensive error reporting with line numbers and context  
-✅ **Custom IR**: Custom Intermediate Representation instead of LLVM for lighter footprint  
 ✅ **Windows Compatible**: Built specifically for Windows systems  
 
 ## 🏃‍♂️ Quick Start - Using Pre-built Binaries
@@ -25,7 +24,7 @@ A simple and efficient compiler for the BasicCode (.bac) programming language, b
 ### 📥 Download & Setup
 
 1. **Download the Release Package**
-   - Go to our [Releases page]()
+   - Go to our [Releases page](https://github.com/Shailesh-Singh-Bisht/BasicCode-Compiler/releases/tag/Release)
    - Download the latest `BasicCode-Compiler.rar` for Windows
 
 2. **Extract & Install**
