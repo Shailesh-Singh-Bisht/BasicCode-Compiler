@@ -13,7 +13,7 @@ A simple and efficient compiler for the BasicCode (.bac) programming language, b
 ✅ **Symbol Table**: Efficient symbol table management for identifier resolution  
 ✅ **Error Handling**: Comprehensive error reporting with line numbers and context  
 ✅ **Custom IR**: Custom Intermediate Representation instead of LLVM for lighter footprint  
-✅ **Cross-Platform**: Builds on Windows, Linux, and macOS
+✅ **Cross-Platform**: Builds on Windows, Linux, and macOS  
 
 ## 🛠️ Setting Up the Project
 
@@ -141,7 +141,6 @@ Product: 200
 
 **1️⃣ `CMake Error: No project() command`**  
 👉 **Solution**: Ensure your `CMakeLists.txt` starts with:
-
 ```cmake
 cmake_minimum_required(VERSION 3.10)
 project(BasicCode-Compiler)
@@ -149,20 +148,17 @@ project(BasicCode-Compiler)
 
 **2️⃣ `CMake cannot find Flex/Bison`**  
 👉 **Solution**:
-
 - Verify `win_flex.exe` and `win_bison.exe` are in your PATH
 - Try reinstalling WinFlexBison and updating your PATH
 
 **3️⃣ `GCC Not Found`**  
 👉 **Solution**: Install GCC through MSYS2:
-
 ```sh
 pacman -S mingw-w64-x86_64-gcc
 ```
 
 **4️⃣ `Permission Denied` when running executable**  
 👉 **Solution**:
-
 - On Windows: Check antivirus software
 - On Linux/macOS: Ensure executable permissions with `chmod +x ./mycompiler`
 
