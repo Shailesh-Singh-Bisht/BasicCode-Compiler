@@ -25,8 +25,8 @@ A simple and efficient compiler for the BasicCode (.bac) programming language, b
 ### 📥 Download & Setup
 
 1. **Download the Release Package**
-   - Go to our [Releases page](https://github.com/yourusername/BasicCode-Compiler/releases)
-   - Download the latest `BasicCode-Compiler-v{version}.zip` for Windows
+   - Go to our [Releases page]()
+   - Download the latest `BasicCode-Compiler.rar` for Windows
 
 2. **Extract & Install**
    ```cmd
@@ -255,9 +255,8 @@ This project is licensed under the **MIT License** - see the `LICENSE` file for 
 
 ## 📞 Support & Community
 
-- 🐛 **Bug Reports**: [Open an Issue](https://github.com/yourusername/BasicCode-Compiler/issues)
-- 💬 **Discussions**: [GitHub Discussions](https://github.com/yourusername/BasicCode-Compiler/discussions)
-- 📖 **Documentation**: Check the `docs/` folder
+- 🐛 **Bug Reports**: [Open an Issue](https://github.com/Shailesh-Singh-Bisht/BasicCode-Compiler/issues)
+- 📖 **Documentation**: Coming in few days
 - 🆘 **Help**: Tag us in issues with `help wanted` label
 
 ## Contributors ✨
