@@ -1,9 +1,5 @@
-```md
-### **📜 `README.md` for BasicCode Compiler**
-
-```md
 BasicCode Compiler
-A simple compiler for the BasicCode (`.bac`) programming language, built using Flex, Bison, GCC, and CMake. This project compiles `.bac` source files into executable machine code.
+A simple and efficient compiler for the BasicCode (`.bac`) programming language, built using Flex, Bison, GCC, and CMake. This project compiles `.bac` source files into executable machine code.
 
 🚀 Features
 ✅ Lexical Analysis (Tokenization using Flex)
@@ -134,7 +130,10 @@ pacman -S mingw-w64-x86_64-gcc
 ---
 
 ## 🏆 Contributors
-👤 **Your Name** – Creator & Maintainer
+👤 **Shailesh Singh Bisht** – Project Lead & Maintainer
+👤 **Nitin Rawat** – Lexer + Error Handler Writer
+👤 **Akhil Nautiyal** – AST + Error Handler Writer
+👤 **Vivek Pokhriyal** – Parser + SymbolTable Writer
 
 📢 Want to contribute? Feel free to submit a **Pull Request!** 🎉
 
