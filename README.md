@@ -180,15 +180,6 @@ We welcome contributions! Here's how you can help:
 - Follow existing code style and conventions
 - Update documentation as needed
 
-## 👥 Contributors
-
-- **Shailesh Singh Bisht** – Project Lead & Maintainer
-- **Nitin Rawat** – Lexer + Error Handler Implementation
-- **Akhil Nautiyal** – AST + Error Handler Implementation
-- **Vivek Pokhriyal** – Parser + Symbol Table Implementation
-
-Want to contribute? We'd love to have you! Check out our Contributing Guidelines and submit a Pull Request! 🎉
-
 ## 📄 License
 
 This project is licensed under the **MIT License** - see the `LICENSE` file for details.
@@ -241,5 +232,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 <!-- prettier-ignore-end -->
 
 <!-- ALL-CONTRIBUTORS-LIST:END -->
+
+Want to contribute? We'd love to have you! Check out our Contributing Guidelines and submit a Pull Request! 🎉
 
 This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
