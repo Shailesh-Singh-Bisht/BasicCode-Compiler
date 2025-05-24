@@ -91,7 +91,7 @@ pacman -S mingw-w64-x86_64-gcc mingw-w64-x86_64-make mingw-w64-x86_64-cmake
 ### 2️⃣ Clone & Build
 
 ```bash
-git clone https://github.com/yourusername/BasicCode-Compiler.git
+git clone https://github.com/Shailesh-Singh-Bisht/BasicCode-Compiler.git
 cd BasicCode-Compiler
 
 # Create build directory
@@ -213,7 +213,7 @@ We welcome contributions! Here's how you can help:
 
 1. **Fork & Clone**
    ```bash
-   git clone https://github.com/yourusername/BasicCode-Compiler.git
+   git clone https://github.com/Shailesh-Singh-Bisht/BasicCode-Compiler.git
    cd BasicCode-Compiler
    ```
 
