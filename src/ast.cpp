@@ -1,37 +1,45 @@
+// Abstract Syntax Tree (AST) implementation
 #include "ast.h"
 #include <iostream>
 
 using namespace std;
 
+// Basic constructor for nodes that don't have values
 ASTNode::ASTNode(NodeType type) : type(type) {}
 
+// Constructor for integer value nodes
 ASTNode::ASTNode(NodeType type, int value)
     : type(type), intVal(value), valueType(VarType::Int) {}
 
+// Constructor for float value nodes
 ASTNode::ASTNode(NodeType type, float value)
     : type(type), floatVal(value), valueType(VarType::Float) {}
 
+// Constructor for boolean value nodes
 ASTNode::ASTNode(NodeType type, bool value)
     : type(type), boolVal(value), valueType(VarType::Bool) {}
 
+// Constructor for string value nodes and declarations
 ASTNode::ASTNode(NodeType type, const string &value)
     : type(type), strVal(value)
 {
+    // For declarations, set the value type based on the child node
     if (type == NodeType::Declaration && !children.empty())
     {
         valueType = children[0]->valueType;
     }
-    cerr << "[AST DEBUG] String constructor: " << value << "\n";
-    cerr << "[AST DEBUG] StringLiteral value stored: " << value << "\n";
 }
 
+// Constructor for binary operations (operations with left and right operands)
 ASTNode::ASTNode(NodeType type, const string &op,
                  shared_ptr<ASTNode> lhs, shared_ptr<ASTNode> rhs)
     : type(type), strVal(op), left(move(lhs)), right(move(rhs)) {}
 
+// Constructor for nodes that have multiple children (like blocks or function bodies)
 ASTNode::ASTNode(NodeType type, const vector<shared_ptr<ASTNode>> &children)
     : type(type), children(children) {}
 
+// Converts node types to their string representation
 string nodeTypeToString(NodeType type)
 {
     switch (type)
@@ -76,59 +84,5 @@ string nodeTypeToString(NodeType type)
         return "FunctionCall";
     default:
         return "Unknown";
-    }
-}
-
-void ASTNode::print(int indent) const
-{
-    if (type == NodeType::FunctionCall)
-        cout << " = " << strVal;
-
-    for (int i = 0; i < indent; ++i)
-        cout << "  ";
-    cout << nodeTypeToString(type);
-
-    switch (type)
-    {
-    case NodeType::Identifier:
-    case NodeType::StringLiteral:
-    case NodeType::FunctionCall:
-    case NodeType::BinaryOp:
-    case NodeType::UnaryOp:
-    case NodeType::Argument:
-    case NodeType::Declaration:
-    case NodeType::Assignment:
-    case NodeType::Function:
-        if (!strVal.empty())
-            cout << " = " << strVal;
-        break;
-
-    case NodeType::IntLiteral:
-        cout << " = " << intVal;
-        break;
-
-    case NodeType::FloatLiteral:
-        cout << " = " << floatVal;
-        break;
-
-    case NodeType::BoolLiteral:
-        cout << " = " << (boolVal ? "true" : "false");
-        break;
-
-    default:
-        break;
-    }
-
-    cout << '\n';
-
-    if (left)
-        left->print(indent + 1);
-    if (right)
-        right->print(indent + 1);
-
-    for (const auto &child : children)
-    {
-        if (child)
-            child->print(indent + 1);
     }
 }

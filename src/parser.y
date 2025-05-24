@@ -96,7 +96,6 @@ statement:
     | expression SEMICOLON        { $$ = $1; }
     | block                       { $$ = $1; }
     | PRINT LPAREN expression RPAREN SEMICOLON {
-    fprintf(stderr, ">>> PARSER: Matched print(expr);\n");
     auto node = std::make_shared<ASTNode>(NodeType::FunctionCall, std::string("print")); 
     node->children.push_back(*static_cast<ASTNodePtr*>($3));
     $$ = new ASTNodePtr(node);
