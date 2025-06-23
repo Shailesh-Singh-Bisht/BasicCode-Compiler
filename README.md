@@ -5,6 +5,8 @@
 
 A simple and efficient compiler for the BasicCode (.bac) programming language, built using Flex, Bison, GCC, and CMake. This project compiles `.bac` source files into executable machine code for Windows.
 
+Link To The Documentation : [Docs](https://drive.google.com/file/d/1jP3cvrfLPGOrGLNv_SObihhMWf0qRbBU/view?usp=sharing)
+
 ## 🚀 Features
 
 ✅ **Lexical Analysis**: Tokenization using Flex for efficient source code scanning  
