@@ -49,3 +49,5 @@ include_directories(
 
 # Executable
 add_executable(mycompiler ${SOURCES})
+
+set(CMAKE_MAKE_PROGRAM "C:/msys64/mingw64/bin/mingw32-make.exe" CACHE FILEPATH "Make program")
